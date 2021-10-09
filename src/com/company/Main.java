@@ -5,13 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
 public class Main  {
-    static ArrayList<Hospital> Hospita_list=new ArrayList<>();
+    static ArrayList<Hospital> Hospital_list =new ArrayList<>();
     static ArrayList<vaccine> Vaccine_name_list= new ArrayList<>();
     static ArrayList<Citizen> Citizen_list=new ArrayList<>();
     static ArrayList<slot>  Slot_list=new ArrayList<>();
@@ -153,7 +151,7 @@ public class Main  {
            long id=(long)Reader1.nextDouble();
            int check=CITIZEN_ID_CHECK(id);
            if(check==1){
-
+                get_status_by_id(id);
            }
            else{
                System.out.println("Please recheck citizen id");
@@ -166,8 +164,6 @@ public class Main  {
         System.out.println("--------------------------------------------");
         i=i+1;
     }
-
-
     }
     public static int check_vaccine(String name){
         for(int i=0;i<Vaccine_name_list.size();i++){
@@ -194,8 +190,8 @@ public class Main  {
     }
 
     public static int check_hospital(String name){
-        for(int i=0;i<Hospita_list.size();i++){
-            if(name.equals((Hospita_list.get(i).Return_Hospital_name()))){
+        for(int i = 0; i< Hospital_list.size(); i++){
+            if(name.equals((Hospital_list.get(i).Return_Hospital_name()))){
                 return 1;
             }
         }
@@ -206,7 +202,7 @@ public class Main  {
         if(String.valueOf(pincode).length()==6){
             Hospital add_hospital=new Hospital(name, pincode,initial);
             initial=initial+1;
-            Hospita_list.add(add_hospital);
+            Hospital_list.add(add_hospital);
             System.out.println("Hospital Name: "+name+", PinCode: "+pincode+", Unique Id: "+ add_hospital.Return_Hospital_id());
         }
         else{
@@ -234,9 +230,9 @@ public class Main  {
      }
 
      public static int Hospital_by_ID(long ID){
-         for(int i=0;i<Hospita_list.size();i++){
-             System.out.println(Hospita_list.get(i).Return_Hospital_id());
-             if(ID==((Hospita_list.get(i).Return_Hospital_id()))){
+         for(int i = 0; i< Hospital_list.size(); i++){
+             System.out.println(Hospital_list.get(i).Return_Hospital_id());
+             if(ID==((Hospital_list.get(i).Return_Hospital_id()))){
                  return 1;
              }
          }
@@ -253,8 +249,8 @@ public class Main  {
      }
 
      public static int Check_Pincode(long pincode){
-         for(int i=0;i<Hospita_list.size();i++){
-             if(pincode==Hospita_list.get(i).Return_Pincode()){
+         for(int i = 0; i< Hospital_list.size(); i++){
+             if(pincode== Hospital_list.get(i).Return_Pincode()){
                 return 1;
              }
          }
@@ -262,9 +258,9 @@ public class Main  {
      }
 
      public static void Hospital_search_by_pincode(long pincode){
-        for(int i=0;i<Hospita_list.size();i++){
-            if(pincode==Hospita_list.get(i).Return_Pincode()){
-                System.out.println(Hospita_list.get(i).Return_Hospital_id()+Hospita_list.get(i).Return_Hospital_name());
+        for(int i = 0; i< Hospital_list.size(); i++){
+            if(pincode== Hospital_list.get(i).Return_Pincode()){
+                System.out.println(Hospital_list.get(i).Return_Hospital_id()+ Hospital_list.get(i).Return_Hospital_name());
             }
         }
      }
@@ -275,6 +271,16 @@ public class Main  {
                  System.out.println("Day: " +Slot_list.get(i).Return_day()+" Vaccine: "+Slot_list.get(i).Return_Vaccine_name()+" Available quantity: "+ Slot_list.get(i).Return_quantity());
              }
          }
+     }
+     public static void get_status_by_id(long id){
+        for(int i=0;i<Citizen_list.size();i++){
+            if(id==Citizen_list.get(i).Return_unique_id()){
+                System.out.println(Citizen_list.get(i).Return_stat().Return_status());
+                System.out.println("Vaccine Given: "+Citizen_list.get(i).Return_stat().Return_Vaccine_name());
+                System.out.println("Number of Doses given: "+Citizen_list.get(i).Return_stat().Return_doses());
+                System.out.println("Next dose due date: "+Citizen_list.get(i).Return_stat().Return_duedate());
+            }
+        }
      }
 }
 
@@ -364,6 +370,9 @@ class Citizen{
     }
     long Return_unique_id(){
         return citizen_id;
+    }
+    status Return_stat(){
+        return Stat;
     }
 }
 class status{
