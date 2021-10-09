@@ -107,7 +107,7 @@ public class Main  {
         }
         if(entry==5){
             System.out.println("Enter patient Unique ID: ");
-            long citi_id=Reader1.nextInt();
+            long citi_id=(long) Reader1.nextDouble();
             int check=CITIZEN_ID_CHECK(citi_id);
             if(check==1) {
                 System.out.println("""
@@ -141,9 +141,23 @@ public class Main  {
             }
         }
         if(entry==6){
-
+            System.out.println("Enter Hospital ID: ");
+            long id=Reader1.nextInt();
+            int check=Hospital_by_ID(id);
+            if(check==1){
+                slots_by_hospital_id(id);
+            }
         }
         if(entry==7){
+           System.out.println("Enter Patient ID");
+           long id=(long)Reader1.nextDouble();
+           int check=CITIZEN_ID_CHECK(id);
+           if(check==1){
+
+           }
+           else{
+               System.out.println("Please recheck citizen id");
+           }
 
         }
         if(entry>=8){
@@ -219,7 +233,7 @@ public class Main  {
         }
      }
 
-     public static int Hospital_by_ID(int ID){
+     public static int Hospital_by_ID(long ID){
          for(int i=0;i<Hospita_list.size();i++){
              System.out.println(Hospita_list.get(i).Return_Hospital_id());
              if(ID==((Hospita_list.get(i).Return_Hospital_id()))){
@@ -253,6 +267,14 @@ public class Main  {
                 System.out.println(Hospita_list.get(i).Return_Hospital_id()+Hospita_list.get(i).Return_Hospital_name());
             }
         }
+     }
+
+     public static void slots_by_hospital_id(long id){
+         for(int i=0;i<Slot_list.size();i++){
+             if(id==Slot_list.get(i).Return_Hospital_ID()){
+                 System.out.println("Day: " +Slot_list.get(i).Return_day()+" Vaccine: "+Slot_list.get(i).Return_Vaccine_name()+" Available quantity: "+ Slot_list.get(i).Return_quantity());
+             }
+         }
      }
 }
 
@@ -340,6 +362,18 @@ class Citizen{
     }
     long Return_unique_id(){
         return citizen_id;
+    }
+}
+class status{
+    String Vaccine;
+    int doses;
+    String status;
+    int timeleft;
+    status(){
+        this.Vaccine=null;
+        this.doses=-1;
+        this.status="REGISTERED";
+        this.timeleft=-1;
     }
 }
 class Reader1 {
