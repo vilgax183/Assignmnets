@@ -349,10 +349,12 @@ class Citizen{
     String citizen_name;
     int citizen_age;
     long citizen_id;
+    status Stat;
     Citizen(String name,int age, long id){
         this.citizen_name=name;
         this.citizen_age=age;
         this.citizen_id=id;
+        this.Stat=new status();
     }
     String Return_citizen_name(){
         return citizen_name;
@@ -374,6 +376,18 @@ class status{
         this.doses=-1;
         this.status="REGISTERED";
         this.timeleft=-1;
+    }
+    String Return_Vaccine_name(){
+        return Vaccine;
+    }
+    int Return_doses(){
+        return doses;
+    }
+    int Return_duedate(){
+        return timeleft;
+    }
+    String Return_status(){
+        return status;
     }
 }
 class Reader1 {
