@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.AnnotatedArrayType;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
@@ -108,6 +109,7 @@ public class Main  {
             long citi_id=(long) Reader1.nextDouble();
             int check=CITIZEN_ID_CHECK(citi_id);
             if(check==1) {
+                String name=name_by_unique_code(citi_id);
                 System.out.println("""
                         1. Search by area
                         2. Search by vaccine
@@ -119,15 +121,24 @@ public class Main  {
                     long pincode = Reader1.nextInt();
                     int check1 = Check_Pincode(pincode);
                     if (check1 == 1) {
+                        ArrayList<slot> temp=new ArrayList<>();
                         Hospital_search_by_pincode(pincode);
                         System.out.println("Enter hospital ID: ");
                         long hospital_id = Reader1.nextInt();
                         for (int p = 0; p < Slot_list.size(); p++) {
                             if (hospital_id == Slot_list.get(p).Return_Hospital_ID()) {
+                                temp.add(Slot_list.get(p));
                                 System.out.println(p + "->" + " Day: " + Slot_list.get(p).Return_day() + " Available Qty: " + Slot_list.get(p).Return_quantity() + " Vaccine: " + Slot_list.get(p).Return_Vaccine_name());
                             }
                         }
                         System.out.println("Choose Slot: ");
+                        int slotter=Reader1.nextInt();
+                        for(int m=0;m<temp.size();m++){
+                            if(slotter==(temp.get(m).Return_day()-1)){
+                                System.out.println(name+" vaccinated with "+temp.get(m).Return_Vaccine_name());
+                                temp.get(m).addQuantity();
+                            }
+                        }
                     }
                     else{
                         System.out.println("Check PinCode again");
@@ -268,20 +279,34 @@ public class Main  {
      public static void slots_by_hospital_id(long id){
          for(int i=0;i<Slot_list.size();i++){
              if(id==Slot_list.get(i).Return_Hospital_ID()){
+                 if(Slot_list.get(i).Return_quantity()<=0){
+                     Slot_list.remove(Slot_list.get(i));
+                 }
                  System.out.println("Day: " +Slot_list.get(i).Return_day()+" Vaccine: "+Slot_list.get(i).Return_Vaccine_name()+" Available quantity: "+ Slot_list.get(i).Return_quantity());
              }
          }
      }
      public static void get_status_by_id(long id){
-        for(int i=0;i<Citizen_list.size();i++){
-            if(id==Citizen_list.get(i).Return_unique_id()){
-                System.out.println(Citizen_list.get(i).Return_stat().Return_status());
-                System.out.println("Vaccine Given: "+Citizen_list.get(i).Return_stat().Return_Vaccine_name());
-                System.out.println("Number of Doses given: "+Citizen_list.get(i).Return_stat().Return_doses());
-                System.out.println("Next dose due date: "+Citizen_list.get(i).Return_stat().Return_duedate());
+        for(int i=0;i<Citizen_list.size();i++) {
+            if (id == Citizen_list.get(i).Return_unique_id()) {
+                if (Citizen_list.get(i).Return_stat().Return_status() == "REGISTERED") {
+                    System.out.println(Citizen_list.get(i).Return_stat().Return_status());
+                } else {
+                    System.out.println("Vaccine Given: " + Citizen_list.get(i).Return_stat().Return_Vaccine_name());
+                    System.out.println("Number of Doses given: " + Citizen_list.get(i).Return_stat().Return_doses());
+                    System.out.println("Next dose due date: " + Citizen_list.get(i).Return_stat().Return_duedate());
+                }
             }
         }
      }
+      public static String name_by_unique_code(long id) {
+          for (int i = 0; i < Citizen_list.size(); i++) {
+              if (id == Citizen_list.get(i).Return_unique_id()) {
+                  return Citizen_list.get(i).Return_citizen_name();
+              }
+          }
+          return " ";
+      }
 }
 
 class slot{
@@ -311,6 +336,9 @@ class slot{
     }
     String Return_Vaccine_name(){
         return Vaccine_name;
+    }
+    void addQuantity() {
+        this.quantity--;
     }
 }
 class vaccine{
