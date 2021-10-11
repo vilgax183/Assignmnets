@@ -26,14 +26,14 @@ public class Main {
     while (true) {
         TimeUnit.SECONDS.sleep(1);
         System.out.println("---------------------------------");
-        System.out.println("""                                                                                                        
-                1. Add Vaccine                                                                                                        
-                2. Register Hospital                                                                                                  
-                3. Register citizen                                                                                                   
-                4. Add Slot for Vaccination                                                                                           
-                5. Book Slot for Vaccination                                                                                          
-                6. List all slots for a hospital                                                                                      
-                7. Checkout Vaccination Status                                                                                        
+        System.out.println("""
+                1. Add Vaccine
+                2. Register Hospital
+                3. Register citizen
+                4. Add Slot for Vaccination
+                5. Book Slot for Vaccination
+                6. List all slots for a hospital
+                7. Checkout Vaccination Status
                 8. Exit""");
         System.out.println("---------------------------------\n");
         int entry = Reader1.nextInt();
@@ -213,7 +213,6 @@ public class Main {
 
     public static int Hospital_by_ID(long ID) {
         for (int i = 0; i < Hospital_list.size(); i++) {
-            System.out.println(Hospital_list.get(i).Return_Hospital_id());
             if (ID == ((Hospital_list.get(i).Return_Hospital_id()))) {
                 return 1;
             }
@@ -266,8 +265,9 @@ public class Main {
             }
         }
     }
-    static ArrayList<Long> codelist=new ArrayList<>();
+
     public static void Hospital_search_by_name(String name){
+        ArrayList<Long> codelist=new ArrayList<>();
         for(int i=0;i<Slot_list.size();i++){
             if(Slot_list.get(i).Return_quantity()>0) {
                 if (name.toLowerCase(Locale.ROOT).equals(Slot_list.get(i).Return_Vaccine_name().toLowerCase(Locale.ROOT))) {
@@ -307,7 +307,9 @@ public class Main {
                     System.out.println(Citizen_list.get(i).Return_stat().Return_status());
                     System.out.println("Vaccine Given: " + Citizen_list.get(i).Return_stat().Return_Vaccine_name());
                     System.out.println("Number of Doses given: " + Citizen_list.get(i).Return_stat().Return_doses());
-                    System.out.println("Next dose due date: " + Citizen_list.get(i).Return_stat().Return_duedate());
+                    if(!Citizen_list.get(i).Return_stat().Return_status().equals("FULLY VACCINATED")) {
+                        System.out.println("Next dose due date: " + Citizen_list.get(i).Return_stat().Return_duedate());
+                    }
                 }
             }
         }
@@ -324,20 +326,13 @@ public class Main {
 
      public static boolean slot_check(int due,long hospitalID){
         boolean hosCheck =false;
-        for(int i=0;i<Hospital_list.size();i++){
-            if(hospitalID==Hospital_list.get(i).Return_Hospital_id()){
+        for(int i=0;i<Slot_list.size();i++){
+            if(hospitalID==Slot_list.get(i).Return_Hospital_ID() && due <= Slot_list.get(i).Return_day()){
                hosCheck=true;
                break;
             }
         }
-        if(hosCheck==true) {
-            for (int i = 0; i < Vaccine_name_list.size(); i++) {
-                if (due <= Vaccine_name_list.get(i).gap+1) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return hosCheck;
      }
 
      public static int check_by_vaccine_name(String name){
@@ -361,7 +356,6 @@ public class Main {
                      due_date = Citizen_list.get(l).Return_stat().Return_duedate();
                  }
              }
-             System.out.println(due_date);
              Hospital_search_by_pincode(PinCode);
              ArrayList<slot> temp = new ArrayList<>();
              System.out.println("Enter hospital Id");
@@ -374,56 +368,108 @@ public class Main {
              }
              else {
                  for (int p = 0; p < Slot_list.size(); p++) {
-                     if (hospital_id == Slot_list.get(p).Return_Hospital_ID()) {
+                     if (hospital_id == Slot_list.get(p).Return_Hospital_ID() )  {
                          temp.add(Slot_list.get(p));
                          System.out.println(p + "->" + " Day: " + Slot_list.get(p).Return_day() + " Available Qty: " + Slot_list.get(p).Return_quantity() + " Vaccine: " + Slot_list.get(p).Return_Vaccine_name());
                      }
                  }
                  System.out.println("Choose Slot: ");
                  int slotter = Reader1.nextInt();
+                 slot chosen_slot = Slot_list.get(slotter);
                  String vaccine = "";
                  int due = 0;
                  String name = "";
+                 String vacc_name = "";
 
                  for (int y = 0; y < Citizen_list.size(); y++) {
                      if (citi_id == Citizen_list.get(y).Return_unique_id()) {
                          name = Citizen_list.get(y).Return_citizen_name();
+                         vacc_name = Citizen_list.get(y).Return_stat().Return_Vaccine_name();
                      }
                  }
 
                  for (int m = 0; m < temp.size(); m++) {
                      if (slotter == (temp.get(m).Return_day() - 1)) {
-                         vaccine = temp.get(m).Return_Vaccine_name();
-                         for (int l = 0; l < Vaccine_name_list.size(); l++) {
-                             if (vaccine.equals(Vaccine_name_list.get(l).return_name())) {
-                                 due = Vaccine_name_list.get(l).return_gap();
+                         if(vacc_name == null) {
+                             vaccine = temp.get(m).Return_Vaccine_name();
+                             for (int l = 0; l < Vaccine_name_list.size(); l++) {
+                                 if (vaccine.equals(Vaccine_name_list.get(l).return_name())) {
+                                     due = Vaccine_name_list.get(l).return_gap();
+                                 }
+                             }
+                             for (int i = 0; i < Vaccine_name_list.size(); i++) {
+                                 if (vaccine.equals(Vaccine_name_list.get(i).return_name())) {
+                                     doses = Vaccine_name_list.get(i).doses;
+                                 }
+                             }
+                             System.out.println(name + " vaccinated with " + temp.get(m).Return_Vaccine_name());
+                             temp.get(m).addQuantity();
+                             for (int y = 0; y < Citizen_list.size(); y++) {
+                                 if (citi_id == Citizen_list.get(y).Return_unique_id()) {
+                                     Citizen_list.get(y).Return_stat().change_dose();
+                                     Citizen_list.get(y).Return_stat().change_due_date(due);
+                                     Citizen_list.get(y).Return_stat().change_Vaccine_name(vaccine);
+                                     if (Citizen_list.get(y).Return_stat().Return_status().equals("REGISTERED")) {
+                                         if (doses == Citizen_list.get(y).Return_stat().Return_doses()) {    
+                                             Citizen_list.get(y).Return_stat().change_status2();             
+                                         } else {                                                            
+                                             Citizen_list.get(y).Return_stat().change_status1();             
+                                         }                                                                   
+                                         break;
+                                     } else if (Citizen_list.get(y).Return_stat().Return_status().equals("PARTIALLY VACCINATED")) {
+                                         if (doses == Citizen_list.get(y).Return_stat().Return_doses()) {
+                                             Citizen_list.get(y).Return_stat().change_status2();
+                                         } else {
+                                             Citizen_list.get(y).Return_stat().change_status1();
+                                         }
+                                         break;
+                                     }
+                                 } else if (Citizen_list.get(y).Return_stat().Return_status().equals("FULLY VACCINATED")) {
+                                 }
+                                 System.out.println("Person is already fully vaccinated");
                              }
                          }
-                         for(int i=0;i<Vaccine_name_list.size();i++){
-                            if(vaccine.equals(Vaccine_name_list.get(i).return_name())) {
-                                   doses=Vaccine_name_list.get(i).doses;
-                            }
-                         }
-                         System.out.println(name + " vaccinated with " + temp.get(m).Return_Vaccine_name());
-                         temp.get(m).addQuantity();
-                         for (int y = 0; y < Citizen_list.size(); y++) {
-                             if (citi_id == Citizen_list.get(y).Return_unique_id()) {
-                                 Citizen_list.get(y).Return_stat().change_dose();
-                                 Citizen_list.get(y).Return_stat().change_due_date(due);
-                                 Citizen_list.get(y).Return_stat().change_Vaccine_name(vaccine);
-                                 if (Citizen_list.get(y).Return_stat().Return_status().equals("REGISTERED")) {
-                                     Citizen_list.get(y).Return_stat().change_status1();
-                                     break;
-                                 } else if (Citizen_list.get(y).Return_stat().Return_status().equals("PARTIALLY VACCINATED")) {
-                                     if(doses==Citizen_list.get(y).Return_stat().Return_doses()) {
-                                         Citizen_list.get(y).Return_stat().change_status2();
+                         else if(vacc_name.equals(chosen_slot)) {
+                             vaccine = temp.get(m).Return_Vaccine_name();
+                             for (int l = 0; l < Vaccine_name_list.size(); l++) {
+                                 if (vaccine.equals(Vaccine_name_list.get(l).return_name())) {
+                                     due = Vaccine_name_list.get(l).return_gap();
+                                 }
+                             }
+                             for (int i = 0; i < Vaccine_name_list.size(); i++) {
+                                 if (vaccine.equals(Vaccine_name_list.get(i).return_name())) {
+                                     doses = Vaccine_name_list.get(i).doses;
+                                 }
+                             }
+                             System.out.println(name + " vaccinated with " + temp.get(m).Return_Vaccine_name());
+                             temp.get(m).addQuantity();
+                             for (int y = 0; y < Citizen_list.size(); y++) {
+                                 if (citi_id == Citizen_list.get(y).Return_unique_id()) {
+                                     Citizen_list.get(y).Return_stat().change_dose();
+                                     Citizen_list.get(y).Return_stat().change_due_date(due);
+                                     Citizen_list.get(y).Return_stat().change_Vaccine_name(vaccine);
+                                     if (Citizen_list.get(y).Return_stat().Return_status().equals("REGISTERED")) {
+                                         if (doses == Citizen_list.get(y).Return_stat().Return_doses()) {                   
+                                             Citizen_list.get(y).Return_stat().change_status2();                            
+                                         } else {                                                                           
+                                             Citizen_list.get(y).Return_stat().change_status1();                            
+                                         }                                                                                  
+                                         break;
+                                     } else if (Citizen_list.get(y).Return_stat().Return_status().equals("PARTIALLY VACCINATED")) {
+                                         if (doses == Citizen_list.get(y).Return_stat().Return_doses()) {
+                                             Citizen_list.get(y).Return_stat().change_status2();
+                                         } else {
+                                             Citizen_list.get(y).Return_stat().change_status1();
+                                         }
+                                         break;
                                      }
-                                     else{
-                                         Citizen_list.get(y).Return_stat().change_status1();
-                                     }
-                                     break;                                                                                       }
                                  } else if (Citizen_list.get(y).Return_stat().Return_status().equals("FULLY VACCINATED")) {
-                             }       System.out.println("Person is already fully vaccinated");
+                                 }
+                                 System.out.println("Person is already fully vaccinated");
+                             }
+                         }
+                         else {
+                             System.out.println("Wrong vaccine chosen");
                          }
                      }
                  }
@@ -456,7 +502,7 @@ public class Main {
             else {
 
                 for (int p = 0; p < Slot_list.size(); p++) {
-                    if (hospital_id == Slot_list.get(p).Return_Hospital_ID()) {
+                    if (hospital_id == Slot_list.get(p).Return_Hospital_ID() && vaccine_name.toLowerCase(Locale.ROOT).equals(Slot_list.get(p).Return_Vaccine_name())) {
                         temp.add(Slot_list.get(p));
                         System.out.println(p + "->" + " Day: " + Slot_list.get(p).Return_day() + " Available Qty: " + Slot_list.get(p).Return_quantity() + " Vaccine: " + Slot_list.get(p).Return_Vaccine_name());
                     }
@@ -498,7 +544,12 @@ public class Main {
                                     Citizen_list.get(y).Return_stat().change_due_date(due);
                                     Citizen_list.get(y).Return_stat().change_Vaccine_name(vaccine);
                                     if (Citizen_list.get(y).Return_stat().Return_status().equals("REGISTERED")) {
-                                        Citizen_list.get(y).Return_stat().change_status1();
+
+                                        if (doses == Citizen_list.get(y).Return_stat().Return_doses()) {    
+                                            Citizen_list.get(y).Return_stat().change_status2();             
+                                        } else {                                                            
+                                            Citizen_list.get(y).Return_stat().change_status1();             
+                                        }                                                                   
                                         break;
                                     } else if (Citizen_list.get(y).Return_stat().Return_status().equals("PARTIALLY VACCINATED")) {
                                         if (doses == Citizen_list.get(y).Return_stat().Return_doses()) {
@@ -513,7 +564,7 @@ public class Main {
                                 }
                             }
                         }
-                        else if(vacc_name.equals(chosen_slot)) {
+                        else if(vacc_name.equals(chosen_slot.Return_Vaccine_name())) {
                             vaccine = temp.get(m).Return_Vaccine_name();
                             for (int l = 0; l < Vaccine_name_list.size(); l++) {
                                 if (vaccine.equals(Vaccine_name_list.get(l).return_name())) {
@@ -535,6 +586,11 @@ public class Main {
                                     Citizen_list.get(y).Return_stat().change_Vaccine_name(vaccine);
                                     if (Citizen_list.get(y).Return_stat().Return_status().equals("REGISTERED")) {
                                         Citizen_list.get(y).Return_stat().change_status1();
+                                        if (doses == Citizen_list.get(y).Return_stat().Return_doses()) {
+                                            Citizen_list.get(y).Return_stat().change_status2();
+                                        } else {
+                                            Citizen_list.get(y).Return_stat().change_status1();
+                                        }
                                         break;
                                     } else if (Citizen_list.get(y).Return_stat().Return_status().equals("PARTIALLY VACCINATED")) {
                                         if (doses == Citizen_list.get(y).Return_stat().Return_doses()) {
@@ -548,6 +604,9 @@ public class Main {
                                     }
                                 }
                             }
+                        }
+                        else {
+                            System.out.println("Wrong vaccine chosen");
                         }
                     }
                 }
