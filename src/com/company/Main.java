@@ -10,251 +10,241 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 
-public class Main  {
-    static ArrayList<Hospital> Hospital_list =new ArrayList<>();
-    static ArrayList<vaccine> Vaccine_name_list= new ArrayList<>();
-    static ArrayList<Citizen> Citizen_list=new ArrayList<>();
-    static ArrayList<slot>  Slot_list=new ArrayList<>();
+public class Main {
+    static ArrayList<Hospital> Hospital_list = new ArrayList<>();
+    static ArrayList<vaccine> Vaccine_name_list = new ArrayList<>();
+    static ArrayList<Citizen> Citizen_list = new ArrayList<>();
+    static ArrayList<slot> Slot_list = new ArrayList<>();
+
     public static void main(String[] args) throws IOException, InterruptedException {
-	System.out.println("CoWin Portal initialized");
-	Reader1.init(System.in);
-	int i=0;
-	while(true){
-        TimeUnit.SECONDS.sleep(1);
-	    System.out.println("---------------------------------");
-	    System.out.println("""
-                1. Add Vaccine
-                2. Register Hospital
-                3. Register citizen
-                4. Add Slot for Vaccination
-                5. Book Slot for Vaccination
-                6. List all slots for a hospital
-                7. Checkout Vaccination Status
-                8. Exit""");
-        System.out.println("---------------------------------\n");
-        int entry=Reader1.nextInt();
-        if(entry==1){
-            System.out.println("Vaccine Name: ");
-            String name=Reader1.next();
-            int check=check_vaccine(name.toLowerCase());
-            if(check==0) {
-                System.out.println("Number of Doses: ");
-                int doses = Reader1.nextInt();
-                System.out.println("Gap between Doses: ");
-                int gap = Reader1.nextInt();
-                ADD_VACCINE(name.toLowerCase(), doses, gap);
+        System.out.println("CoWin Portal initialized");
+        Reader1.init(System.in);
+        int i = 0;
+        while (true) {
+            TimeUnit.SECONDS.sleep(1);
+            System.out.println("---------------------------------");
+            System.out.println("""
+                    1. Add Vaccine
+                    2. Register Hospital
+                    3. Register citizen
+                    4. Add Slot for Vaccination
+                    5. Book Slot for Vaccination
+                    6. List all slots for a hospital
+                    7. Checkout Vaccination Status
+                    8. Exit""");
+            System.out.println("---------------------------------\n");
+            int entry = Reader1.nextInt();
+            if (entry == 1) {
+                System.out.println("Vaccine Name: ");
+                String name = Reader1.next();
+                int check = check_vaccine(name.toLowerCase());
+                if (check == 0) {
+                    System.out.println("Number of Doses: ");
+                    int doses = Reader1.nextInt();
+                    System.out.println("Gap between Doses: ");
+                    int gap = Reader1.nextInt();
+                    ADD_VACCINE(name.toLowerCase(), doses, gap);
+                } else {
+                    System.out.println("vaccine already exist");
+                }
             }
-            else{
-                System.out.println("vaccine already exist");
-            }
-        }
-        if(entry==2){
-            System.out.println("Hospital Name: ");
-            String Hospital_name=Reader1.next();
-            int check=check_hospital(Hospital_name.toLowerCase());
-            if(check==0){
-                System.out.println("PinCode: ");
-                int pincode=Reader1.nextInt();
-                ADD_HOSPITAL(Hospital_name,pincode);
-            }
-            else{
-                System.out.println("Hospital already exists");
-            }
-
-        }
-        if(entry==3){
-            System.out.println("Citizen Name: ");
-            String citizen_name=Reader1.next();
-            System.out.println("Age: ");
-            int citizen_age=Reader1.nextInt();
-            System.out.println("Unique ID: ");
-            long citizen_unique_ID= (long) Reader1.nextDouble();
-            int check=CITIZEN_ID_CHECK(citizen_unique_ID);
-            if(check==0){
-                ADD_CITIZEN(citizen_name,citizen_age,citizen_unique_ID);
-            }
-            else{
-                System.out.println("Citizen already registered");
-            }
-            if(citizen_age<18){
-                System.out.println("Only above 18 are allowed");
+            if (entry == 2) {
+                System.out.println("Hospital Name: ");
+                String Hospital_name = Reader1.next();
+                int check = check_hospital(Hospital_name.toLowerCase());
+                if (check == 0) {
+                    System.out.println("PinCode: ");
+                    int pincode = Reader1.nextInt();
+                    ADD_HOSPITAL(Hospital_name, pincode);
+                } else {
+                    System.out.println("Hospital already exists");
+                }
 
             }
-        }
-        if(entry==4){
-            System.out.println("Enter hospital ID: ");
-            int Hospital_ID=Reader1.nextInt();
-            int check=Hospital_by_ID(Hospital_ID);
-            if(check==1) {
-                System.out.println("Enter the slots to be added: ");
-                int slots = Reader1.nextInt();
-                for(int j=0;j<slots;j++) {
-                    System.out.println("Enter day number");
-                    int day = Reader1.nextInt();
-                    System.out.println("Enter Quantity");
-                    int quantity = Reader1.nextInt();
-                    for(int k=0;k<Vaccine_name_list.size();k++){
-                        System.out.println(k+"."+Vaccine_name_list.get(k).return_name());
+            if (entry == 3) {
+                System.out.println("Citizen Name: ");
+                String citizen_name = Reader1.next();
+                System.out.println("Age: ");
+                int citizen_age = Reader1.nextInt();
+                System.out.println("Unique ID: ");
+                long citizen_unique_ID = (long) Reader1.nextDouble();
+                int check = CITIZEN_ID_CHECK(citizen_unique_ID);
+                if (check == 0) {
+                    ADD_CITIZEN(citizen_name, citizen_age, citizen_unique_ID);
+                } else {
+                    System.out.println("Citizen already registered");
+                }
+                if (citizen_age < 18) {
+                    System.out.println("Only above 18 are allowed");
+
+                }
+            }
+            if (entry == 4) {
+                System.out.println("Enter hospital ID: ");
+                int Hospital_ID = Reader1.nextInt();
+                int check = Hospital_by_ID(Hospital_ID);
+                if (check == 1) {
+                    System.out.println("Enter the slots to be added: ");
+                    int slots = Reader1.nextInt();
+                    for (int j = 0; j < slots; j++) {
+                        System.out.println("Enter day number");
+                        int day = Reader1.nextInt();
+                        System.out.println("Enter Quantity");
+                        int quantity = Reader1.nextInt();
+                        for (int k = 0; k < Vaccine_name_list.size(); k++) {
+                            System.out.println(k + "." + Vaccine_name_list.get(k).return_name());
+                        }
+                        int selection = Reader1.nextInt();
+                        String vaccine = Vaccine_name_list.get(selection).return_name();
+                        Add_Vaccine_slot(Hospital_ID, vaccine, slots, quantity, day);
                     }
-                    int selection=Reader1.nextInt();
-                    String vaccine=Vaccine_name_list.get(selection).return_name();
-                    Add_Vaccine_slot(Hospital_ID,vaccine,slots,quantity,day);
+                } else {
+                    System.out.println("Hospital by this ID doesn't exist");
                 }
             }
-            else{
-                System.out.println("Hospital by this ID doesn't exist");
-            }
-        }
-        if(entry==5) {
-            System.out.print("Enter patient unique ID: ");
-            long citID = Reader1.nextInt();
-            if (CITIZEN_ID_CHECK(citID)==1) {
-                int counter = slotoptions();
-                if(counter == 1) {
-                    searchByArea(citID);
-                }
-                if(counter == 2) {
-                    searchByVaccine(citID);
-                }
-                else {
-                    System.out.println("Exit");
+            if (entry == 5) {
+                System.out.print("Enter patient unique ID: ");
+                long citi_id = (long) Reader1.nextDouble();
+                if (CITIZEN_ID_CHECK(citi_id) == 1) {
+                    int counter = options();
+                    if (counter == 1) {
+                        Vaccinebyarea(citi_id);
+                    }
+                    if (counter == 2) {
+                        //searchByVaccine(citID);
+                    } else {
+                        System.out.println("Exit");
+                    }
                 }
             }
-        }
-        if(entry==6){
-            System.out.println("Enter Hospital ID: ");
-            long id=Reader1.nextInt();
-            int check=Hospital_by_ID(id);
-            if(check==1){
-                slots_by_hospital_id(id);
+            if (entry == 6) {
+                System.out.println("Enter Hospital ID: ");
+                long id = Reader1.nextInt();
+                int check = Hospital_by_ID(id);
+                if (check == 1) {
+                    slots_by_hospital_id(id);
+                }
             }
-        }
-        if(entry==7){
-           System.out.println("Enter Patient ID");
-           long id=(long)Reader1.nextDouble();
-           int check=CITIZEN_ID_CHECK(id);
-           if(check==1){
-                get_status_by_id(id);
-           }
-           else{
-               System.out.println("Please recheck citizen id");
-           }
+            if (entry == 7) {
+                System.out.println("Enter Patient ID");
+                long id = (long) Reader1.nextDouble();
+                int check = CITIZEN_ID_CHECK(id);
+                if (check == 1) {
+                    get_status_by_id(id);
+                } else {
+                    System.out.println("Please recheck citizen id");
+                }
 
+            }
+            if (entry >= 8) {
+                break;
+            }
+            System.out.println("--------------------------------------------");
+            i = i + 1;
         }
-        if(entry>=8){
-            break;
-        }
-        System.out.println("--------------------------------------------");
-        i=i+1;
     }
-    }
-    public static int check_vaccine(String name){
-        for(int i=0;i<Vaccine_name_list.size();i++){
-            if(name.equals((Vaccine_name_list.get(i).return_name()))){
+
+    public static int check_vaccine(String name) {
+        for (int i = 0; i < Vaccine_name_list.size(); i++) {
+            if (name.equals((Vaccine_name_list.get(i).return_name()))) {
                 return 1;
             }
         }
         return 0;
     }
-    public static void ADD_VACCINE(String name,int doses,int gap){
-        if(doses>=1){
-            if(gap>=0){
-                vaccine addition=new vaccine(name,doses,gap);
+
+    public static void ADD_VACCINE(String name, int doses, int gap) {
+        if (doses >= 1) {
+            if (gap >= 0) {
+                vaccine addition = new vaccine(name, doses, gap);
                 Vaccine_name_list.add(addition);
-                System.out.println("Vaccine Name: "+name+", Number of doses: "+doses+", Gap between doses "+gap);
-            }
-            else{
+                System.out.println("Vaccine Name: " + name + ", Number of doses: " + doses + ", Gap between doses " + gap);
+            } else {
                 System.out.println("gap cannot be less than 0");
             }
-        }
-        else{
+        } else {
             System.out.println("Enter at-least one dose");
         }
     }
 
-    public static int check_hospital(String name){
-        for(int i = 0; i< Hospital_list.size(); i++){
-            if(name.equals((Hospital_list.get(i).Return_Hospital_name()))){
+    public static int check_hospital(String name) {
+        for (int i = 0; i < Hospital_list.size(); i++) {
+            if (name.equals((Hospital_list.get(i).Return_Hospital_name()))) {
                 return 1;
             }
         }
         return 0;
     }
-    static int initial=100000;
-    public static void ADD_HOSPITAL(String name,int pincode){
-        if(String.valueOf(pincode).length()==6){
-            Hospital add_hospital=new Hospital(name, pincode,initial);
-            initial=initial+1;
+
+    static int initial = 100000;
+
+    public static void ADD_HOSPITAL(String name, int pincode) {
+        if (String.valueOf(pincode).length() == 6) {
+            Hospital add_hospital = new Hospital(name, pincode, initial);
+            initial = initial + 1;
             Hospital_list.add(add_hospital);
-            System.out.println("Hospital Name: "+name+", PinCode: "+pincode+", Unique Id: "+ add_hospital.Return_Hospital_id());
-        }
-        else{
+            System.out.println("Hospital Name: " + name + ", PinCode: " + pincode + ", Unique Id: " + add_hospital.Return_Hospital_id());
+        } else {
             System.out.println("Please recheck the PinCode");
         }
     }
 
-    public static int CITIZEN_ID_CHECK(long ID){
-        for(int i=0;i<Citizen_list.size();i++){
-            if(ID==((Citizen_list.get(i).Return_unique_id()))){
+    public static int CITIZEN_ID_CHECK(long ID) {
+        for (int i = 0; i < Citizen_list.size(); i++) {
+            if (ID == ((Citizen_list.get(i).Return_unique_id()))) {
                 return 1;
             }
         }
         return 0;
     }
-     public static void ADD_CITIZEN(String citizen_name,int Citizen_age, long Citizen_Id){
-        if(String.valueOf(Citizen_Id).length()==12){
-            Citizen add_citizen=new Citizen(citizen_name,Citizen_age,Citizen_Id);
+
+    public static void ADD_CITIZEN(String citizen_name, int Citizen_age, long Citizen_Id) {
+        if (String.valueOf(Citizen_Id).length() == 12) {
+            Citizen add_citizen = new Citizen(citizen_name, Citizen_age, Citizen_Id);
             Citizen_list.add(add_citizen);
-            System.out.println("Citzen Name: "+citizen_name+", Age: "+Citizen_age+", Unique ID: "+Citizen_Id);
-        }
-        else{
+            System.out.println("Citzen Name: " + citizen_name + ", Age: " + Citizen_age + ", Unique ID: " + Citizen_Id);
+        } else {
             System.out.println("Please recheck Unique ID");
         }
-     }
+    }
 
-     public static int Hospital_by_ID(long ID){
-         for(int i = 0; i< Hospital_list.size(); i++){
-             System.out.println(Hospital_list.get(i).Return_Hospital_id());
-             if(ID==((Hospital_list.get(i).Return_Hospital_id()))){
-                 return 1;
-             }
-         }
-         return 0;
-     }
-
-     public static void Add_Vaccine_slot(long Hospital_id,String Vaccine,int slots, int quantity,int day){
-        if(quantity>=0 && day>=0){
-            slot slot_add=new slot(Hospital_id,quantity,day,Vaccine,slots);
-            Slot_list.add(slot_add);
-            System.out.println("Slot added by hospital "+Hospital_id+" for Day: "+day+", Available Quantity: "+quantity+" of "+Vaccine);
-
-        }
-     }
-
-     public static int Check_Pincode(long pincode){
-         for(int i = 0; i< Hospital_list.size(); i++){
-             if(pincode== Hospital_list.get(i).Return_Pincode()){
+    public static int Hospital_by_ID(long ID) {
+        for (int i = 0; i < Hospital_list.size(); i++) {
+            System.out.println(Hospital_list.get(i).Return_Hospital_id());
+            if (ID == ((Hospital_list.get(i).Return_Hospital_id()))) {
                 return 1;
-             }
-         }
-         return 0;
-     }
-
-     public static boolean Hospital_search_by_pincode(long pincode,int duedate){
-        String alpha=null;
-        for(int i = 0; i< Hospital_list.size(); i++){
-            if(pincode== Hospital_list.get(i).Return_Pincode()){
-                if(duedate<=Slot_list.get(i).Return_Hospital_ID()) {
-                    alpha=(Hospital_list.get(i).Return_Hospital_id() +" "+ Hospital_list.get(i).Return_Hospital_name());
-                    System.out.println(alpha);
-                }
             }
         }
-        if(alpha!=null){
-            return true;
+        return 0;
+    }
+
+    public static void Add_Vaccine_slot(long Hospital_id, String Vaccine, int slots, int quantity, int day) {
+        if (quantity >= 0 && day >= 0) {
+            slot slot_add = new slot(Hospital_id, quantity, day, Vaccine, slots);
+            Slot_list.add(slot_add);
+            System.out.println("Slot added by hospital " + Hospital_id + " for Day: " + day + ", Available Quantity: " + quantity + " of " + Vaccine);
+
         }
-        return false;
-     }
+    }
+
+    public static int Check_Pincode(long pincode) {
+        for (int i = 0; i < Hospital_list.size(); i++) {
+            if (pincode == Hospital_list.get(i).Return_Pincode()) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    public static void Hospital_search_by_pincode(long pincode, int duedate) {
+        String alpha = "";
+        for (int i = 0; i < Hospital_list.size() ; i++) {
+            if (pincode == Hospital_list.get(i).Return_Pincode()) {
+                alpha = (Hospital_list.get(i).Return_Hospital_id() + " " + Hospital_list.get(i).Return_Hospital_name());
+                System.out.println(alpha);
+            }
+        }
+    }
     public static boolean Hospital_search_by_name(String name,int duedate){
         String alpha=null;
         Long id;
@@ -294,7 +284,7 @@ public class Main  {
             if (id == Citizen_list.get(i).Return_unique_id()) {
                 if (Citizen_list.get(i).Return_stat().Return_status() == "REGISTERED") {
                     System.out.println(Citizen_list.get(i).Return_stat().Return_status());
-                } else if(Citizen_list.get(i).Return_stat().Return_status() !="REGIATERED") {
+                } else if(Citizen_list.get(i).Return_stat().Return_status() !="REGISTERED") {
                     System.out.println(Citizen_list.get(i).Return_stat().Return_status());
                     System.out.println("Vaccine Given: " + Citizen_list.get(i).Return_stat().Return_Vaccine_name());
                     System.out.println("Number of Doses given: " + Citizen_list.get(i).Return_stat().Return_doses());
@@ -304,6 +294,106 @@ public class Main  {
         }
      }
 
+     public static int options() throws IOException {
+        System.out.println("""
+                1. Search by area
+                2. Search by vaccine
+                3. Exit""");
+        int input=Reader1.nextInt();
+        return input;
+     }
+
+     public static boolean slot_check(int due,long hospitalID){
+        boolean hosCheck =false;
+        for(int i=0;i<Hospital_list.size();i++){
+            if(hospitalID==Hospital_list.get(i).Return_Hospital_id()){
+               hosCheck=true;
+            }
+        }
+        if(hosCheck==true) {
+            for (int i = 0; i < Vaccine_name_list.size(); i++) {
+                if (due <= Vaccine_name_list.get(i).gap) {
+                    return true;
+                }
+            }
+        }
+        return false;
+     }
+
+     public static void Vaccinebyarea(long citi_id) throws IOException {
+        System.out.println("Enter PinCode");
+        long PinCode=Reader1.nextInt();
+        int check=Check_Pincode(PinCode);
+         if (check == 1) {
+             int due_date = 0;
+             for (int l = 0; l < Citizen_list.size(); l++) {
+                 if (citi_id == Citizen_list.get(l).Return_unique_id()) {
+                     due_date = Citizen_list.get(l).Return_stat().Return_duedate();
+                 }
+             }
+             System.out.println(due_date);
+             Hospital_search_by_pincode(PinCode,due_date);
+             ArrayList<slot> temp = new ArrayList<>();
+             System.out.println("Enter hospital Id");
+             long hospital_id = Reader1.nextInt();
+             boolean point=false;
+             point=slot_check(due_date,hospital_id);
+             if(point==false){
+                 System.out.println("No slots available");
+                 options();
+             }
+
+             for (int p = 0; p < Slot_list.size(); p++) {
+                 if (hospital_id == Slot_list.get(p).Return_Hospital_ID()) {
+                     temp.add(Slot_list.get(p));
+                     System.out.println(p + "->" + " Day: " + Slot_list.get(p).Return_day() + " Available Qty: " + Slot_list.get(p).Return_quantity() + " Vaccine: " + Slot_list.get(p).Return_Vaccine_name());
+                 }
+             }
+             System.out.println("Choose Slot: ");
+             int slotter = Reader1.nextInt();
+             String vaccine = "";
+             int due = 0;
+             String name="";
+
+             for(int y=0;y<Citizen_list.size();y++) {
+                 if (citi_id == Citizen_list.get(y).Return_unique_id()) {
+                     name = Citizen_list.get(y).Return_citizen_name();
+                 }
+             }
+
+             for (int m = 0; m < temp.size(); m++) {
+                 if (slotter == (temp.get(m).Return_day() - 1)) {
+                     vaccine = temp.get(m).Return_Vaccine_name();
+                     for (int l = 0; l < Vaccine_name_list.size(); l++) {
+                         if (vaccine.equals(Vaccine_name_list.get(l).return_name())) {
+                             due = Vaccine_name_list.get(l).return_gap();
+                         }
+                     }
+                     System.out.println(name + " vaccinated with " + temp.get(m).Return_Vaccine_name());
+                     temp.get(m).addQuantity();
+                     for (int y = 0; y < Citizen_list.size(); y++) {
+                         if (citi_id == Citizen_list.get(y).Return_unique_id()) {
+                             Citizen_list.get(y).Return_stat().change_dose();
+                             Citizen_list.get(y).Return_stat().change_due_date(due);
+                             Citizen_list.get(y).Return_stat().change_Vaccine_name(vaccine);
+                             if (Citizen_list.get(y).Return_stat().Return_status().equals("REGISTERED")) {
+                                 Citizen_list.get(y).Return_stat().change_status1();
+                                 break;
+                             }
+                             else if (Citizen_list.get(y).Return_stat().Return_status().equals("PARTIALLY VACCINATED")) {
+                                 Citizen_list.get(y).Return_stat().change_status2();
+                                 break;
+                             }
+                             else if(Citizen_list.get(y).Return_stat().Return_status().equals("FULLY VACCINATED")){
+                                 System.out.println("Person is already fully vaccinated");
+                             }
+
+                         }
+                     }
+                 }
+             }
+         }
+     }
 }
 
 class slot{
