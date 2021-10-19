@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
-import java.util.concurrent.locks.ReadWriteLock;
 
 public class Main {
     static private ArrayList<instructor> Instructor_list = new ArrayList<>();
@@ -51,7 +50,8 @@ public class Main {
             }
             if (add_what == 2) {
                 addvideo((id_choice));
-            } else {
+            }
+            if(add_what!=2 && add_what!=1) {
                 System.out.println("wrong selection");
             }
         }
@@ -61,37 +61,54 @@ public class Main {
                     2. Add quiz""");
             int add_what = Reader1.nextInt();
             if (add_what == 1) {
-                addass(id_choice);
+                addass();
             }
             if (add_what == 2) {
-                addqui(id_choice);
-            } else {
+                addqui();
+            }
+            else if(add_what!=2 && add_what!=1){
                 System.out.println("wrong selection");
             }
         }
         if (choice == 3) {
-            view_lecture(id_choice);
+            view_lecture();
         }
         if (choice == 4) {
-            view_ass(id_choice);
+            view_ass();
         }
         if (choice == 5) {
             grade_ass(id_choice);
         }
         if(choice==6){
-            close_ass(id_choice);
+            close_ass();
         }
+        if(choice==7){
+            view_com(id_choice);
+        }
+        if(choice==8){
+            add_com(id_choice);
+        }
+        if(choice==9){
+            Main.open_window();
+        }
+        instructor(id_choice);
     }
 
-    public static void student() throws IOException {
+    public static void startstumenu() throws Exception {
         System.out.println("Students: ");
         for (int i = 0; i < Student_list.size(); i++) {
             System.out.println(i + "-" + Student_list.get(i).return_student_id());
         }
         System.out.println("Select Id");
         int id_choice = Reader1.nextInt();
-        String id = Student_list.get(id_choice).return_student_id();
-        System.out.println("Welcome " + id);
+        student stu= Student_list.get(id_choice);
+        student(stu);
+    }
+
+
+    public static void student(student id_choice) throws Exception {
+
+        System.out.println("Welcome " + id_choice.return_student_id());
         System.out.println("STUDENT MENU");
         System.out.println("""
                 1. View lecture materials
@@ -101,6 +118,29 @@ public class Main {
                 5. View comments
                 6. Add comments
                 7. Logout """);
+        int choice=Reader1.nextInt();
+        if (choice == 1) {
+            view_lecture();
+        }
+        if(choice==2){
+            view_ass();
+        }
+        if(choice==3){
+            sub_ass(id_choice);
+        }
+        if(choice==4){
+            view_grade(id_choice);
+        }
+        if(choice==5){
+            view_grade(id_choice);
+        }
+        if(choice==6){
+            add_com(id_choice);
+        }
+        if(choice==7){
+            Main.open_window();
+        }
+        student(id_choice);
     }
 
     public static void main(String[] args) throws Exception {
@@ -110,6 +150,11 @@ public class Main {
         Student_list.add(new student(" S0"));
         Student_list.add(new student(" S1"));
         Student_list.add(new student(" S2"));
+        open_window();
+
+    }
+
+    public static void open_window() throws Exception {
         while (true) {
             System.out.println("""
                     Welcome to Backpack
@@ -122,16 +167,15 @@ public class Main {
                 startprofmenu();
             }
             if (choice == 2) {
-                student();
+                startstumenu();
             }
             if (choice == 3) {
                 break;
-            } else {
+            } else if(choice!=1 && choice!=2 && choice!=3) {
                 System.out.println("please select a valid option");
             }
         }
     }
-
     public static void addslide(instructor id) throws Exception {
         System.out.println("Enter the topic of slides");
         String topic = Reader1.nextLine();
@@ -145,7 +189,6 @@ public class Main {
             alpha.add(content);
         }
         lec_list.add(new lectureSlides(id, topic, alpha));
-        instructor(id);
     }
 
     public static void addvideo(instructor id) throws Exception {
@@ -160,42 +203,38 @@ public class Main {
             System.out.println("enter correct video format");
             instructor(id);
         }
-        instructor(id);
     }
 
-    public static void view_lecture(instructor id) throws Exception {
+    public static void view_lecture() throws Exception {
         int i = 0;
         while (i < lec_list.size()) {
             lec_list.get(i).printit();
             i = i + 1;
         }
-        instructor(id);
     }
 
-    public static void addass(instructor id) throws Exception {
+    public static void addass() throws Exception {
         System.out.println("Enter Problem Statement: ");
         String prob_stat = Reader1.nextLine();
         System.out.println("Enter maximum marks: ");
         int max_marks = Reader1.nextInt();
         assessmentList.add(new assignment_class(prob_stat, max_marks));
-        instructor(id);
     }
 
-    public static void addqui(instructor id) throws Exception {
+    public static void addqui() throws Exception {
         System.out.println("Enter quiz question: ");
         String ques_quiz = Reader1.nextLine();
         assessmentList.add(new quiz_class(ques_quiz));
-        instructor(id);
     }
 
-    public static void view_ass(instructor id) throws Exception {
+    public static void view_ass() throws Exception {
         if (assessmentList.size() != 0) {
             for (int j = 0; j < assessmentList.size(); j++) {
                 if (assessmentList.get(j).returnType() == "quiz") {
-                    System.out.println("ID: " + j + "Question: " + assessmentList.get(j).returnQuestion());
+                    System.out.println("ID: " + j + " Question: " + assessmentList.get(j).returnQuestion());
                     System.out.println("----------------------");
 
-                } else if (assessmentList.get(j).returnType() == "assignmnet") {
+                } else if (assessmentList.get(j).returnType() == "assignment") {
                     System.out.println("ID: " + j + "Assignment: " + assessmentList.get(j).returnQuestion() + " Max marks: " + assessmentList.get(j).returnMarks());
                     System.out.println("----------------------");
 
@@ -204,7 +243,6 @@ public class Main {
         } else {
             System.out.println("No pending assignment left");
         }
-        instructor(id);
     }
 
     public static void grade_ass(instructor id) throws Exception {
@@ -215,14 +253,13 @@ public class Main {
                 System.out.println("ID: " + j + "Question: " + assessmentList.get(j).returnQuestion());
                 System.out.println("-------------------------");
 
-            } else if (assessmentList.get(j).returnType() == "assignmnet") {
+            } else if (assessmentList.get(j).returnType() == "assignment") {
                 System.out.println("ID: " + j + "Assignment: " + assessmentList.get(j).returnQuestion() + " Max marks: " + assessmentList.get(j).returnMarks());
                 System.out.println("-------------------------");
 
             }
         }
         grade_ass2(id);
-        instructor(id);
     }
 
     public static void grade_ass2(instructor id) throws IOException {
@@ -248,14 +285,14 @@ public class Main {
         assessmentList.get(ass_to_be).returnStudentSolutions().get(UngradedSub).done(marksScored, id.return_instructor_id());
     }
 
-    public static void close_ass(instructor id) throws Exception {
+    public static void close_ass() throws Exception {
         if (assessmentList.size() != 0) {
             for (int j = 0; j < assessmentList.size(); j++) {
                 if (assessmentList.get(j).returnType() == "quiz") {
                     System.out.println("ID: " + j + "Question: " + assessmentList.get(j).returnQuestion());
                     System.out.println("----------------------");
 
-                } else if (assessmentList.get(j).returnType() == "assignmnet") {
+                } else if (assessmentList.get(j).returnType() == "assignment") {
                     System.out.println("ID: " + j + "Assignment: " + assessmentList.get(j).returnQuestion() + " Max marks: " + assessmentList.get(j).returnMarks());
                     System.out.println("----------------------");
 
@@ -267,11 +304,112 @@ public class Main {
         } else {
             System.out.println("No assignment left");
         }
-        instructor(id);
+    }
+
+    public static void view_com(user id){
+        for(int i=0;i<commentList.size();i++){
+            commentList.get(i).printit();
+        }
+    }
+
+    public static void add_com(user id) throws IOException {
+        System.out.println("Enter comment: ");
+        String comment=Reader1.nextLine();
+
+        commentList.add(new comment(comment,id.get_id()));
+
+    }
+
+    public static void sub_ass(student id) throws Exception {
+        System.out.println("Pending Assessments: ");
+        ArrayList<assessment_interface> PL = new ArrayList<>();
+        sub_ass2(PL,id);
+
+    }
+
+    public static void sub_ass2(ArrayList<assessment_interface> PL,student id) throws Exception {
+        for (int i = 0; i < assessmentList.size(); i++) {
+            if (id.sub_stat(assessmentList.get(i)) == false) {
+                PL.add(assessmentList.get(i));
+                if (assessmentList.get(i).returnType() == "assignment") {
+                    System.out.println("ID: " + i + " Assignment: " + assessmentList.get(i).returnQuestion() + " Max marks: " + assessmentList.get(i).returnMarks());
+                    System.out.println("------------");
+                } else {
+                    System.out.println("ID: " + i + " Question: " + assessmentList.get(i).returnQuestion());
+                    System.out.println("------------");
+                }
+            }
+
+        }
+        sub_ass3(id,PL);
+    }
+
+    public static void sub_ass3(student id,ArrayList<assessment_interface> PL) throws Exception {
+        ArrayList<student> temp=new ArrayList<>();
+        if (PL.size() > 0) {
+            System.out.println("Enter ID of assessment: ");
+            int PI = Reader1.nextInt();
+            if (PL.get(PI).returnType() == "assignment") {
+                System.out.println("Enter filename of assignment: ");
+                String PFN =Reader1.nextLine();
+                sub_ass4(PI,PL,id,PFN);
+
+            } else {
+                System.out.println(PL.get(PI).returnQuestion());
+                String ans = Reader1.nextLine();
+                PL.get(PI).Response(ans);
+                id.submit_status_fin(true, PL.get(PI));
+                solution cursub = new solution(PL.get(PI), id);
+                PL.get(PI).sub(cursub);
+            }
+
+        } else {
+            System.out.println("No pending assessments");
+        }
+    }
+
+    public static void sub_ass4(int PI,ArrayList<assessment_interface> PL,student id,String PFN) throws Exception {
+        if (PFN.length() > 4 && (PFN.substring(PFN.length() - 4).equals(".zip"))) {
+            PL.get(PI).Response(PFN);
+            id.submit_status_fin(true, PL.get(PI));
+            solution currSubmission = new solution(PL.get(PI), id);
+            PL.get(PI).sub(currSubmission);
+        } else {
+            System.out.println("Invalid value. Try again");
+            student(id);
+        }
+    }
+
+    public static void view_grade(student id){
+        System.out.println("Graded submissions: ");
+        for(int i = 0; i < assessmentList.size(); i++) {
+            if(id.sub_stat(assessmentList.get(i)) == true && id.check_stat(assessmentList.get(i)) == true) {
+                System.out.println("Submission: " + id.sub_stat(assessmentList.get(i)));
+                ArrayList<solution> sublist = assessmentList.get(i).returnStudentSolutions();
+                for(int j = 0; i < sublist.size(); j++) {
+                    if(sublist.get(i).return_student() == id) {
+                        System.out.println("Marks Scored: " + id.return_marks(sublist.get(i)));
+                        System.out.println("Graded by: " + id.return_instructor(sublist.get(i)));
+                    }
+                }
+
+            }
+        }
+        System.out.println("------------------");
+        System.out.println("Ungraded submissions");
+        for(int i = 0; i < assessmentList.size(); i++) {
+            if(id.sub_stat(assessmentList.get(i)) == true && id.check_stat(assessmentList.get(i)) == false) {
+                System.out.println("Submission: " + id.return_sub(assessmentList.get(i)));
+
+            }
+        }
+        System.out.println(" ");
+
     }
 }
-
-class student{
+class student implements user{
+    private ArrayList<assessment_interface> ungraded_ass=new ArrayList<>();
+    private ArrayList<solution> submitted_ass=new ArrayList<>();
     private String student_id;
     private assessment_interface stu_ass;
     private solution stu_sol;
@@ -284,11 +422,11 @@ class student{
 
     boolean check_stat(assessment_interface ass){
         this.stu_ass=ass;
-        return this.stu_ass.returnSubmitStatus();
+        return this.stu_ass.returncheckstatus();
     }
     boolean sub_stat(assessment_interface ass){
         this.stu_ass=ass;
-        return this.stu_ass.returncheckstatus();
+        return this.stu_ass.returnSubmitStatus();
     }
 
     String return_sub(assessment_interface ass){
@@ -316,8 +454,17 @@ class student{
         this.stu_ass.submit_status(stat);
     }
 
+    @Override
+    public String get_id() {
+        return student_id;
+    }
+
+    @Override
+    public void logout() throws Exception {
+        Main.open_window();
+    }
 }
-class instructor{
+class instructor implements user{
     private String Instructor_id;
 
     instructor(String Ins_id){
@@ -328,6 +475,15 @@ class instructor{
         return this.Instructor_id;
     }
 
+    @Override
+    public String get_id() {
+        return Instructor_id;
+    }
+
+    @Override
+    public void logout() throws Exception {
+        Main.open_window();
+    }
 }
 class quiz_class implements assessment_interface{
     private String question;
@@ -383,13 +539,13 @@ class quiz_class implements assessment_interface{
     }
 
     @Override
-    public void Response() {
+    public void Response(String resp) {
 
     }
 
     @Override
     public String returnType() {
-        return "Assignmnet";
+        return "quiz";
     }
 
     @Override
@@ -434,12 +590,12 @@ class assignment_class implements assessment_interface{
 
     @Override
     public boolean returnSubmitStatus() {
-        return false;
+        return submit_status;
     }
 
     @Override
     public boolean returncheckstatus() {
-        return false;
+        return check_status;
     }
 
     @Override
@@ -458,13 +614,13 @@ class assignment_class implements assessment_interface{
     }
 
     @Override
-    public void Response() {
+    public void Response(String res) {
 
     }
 
     @Override
     public String returnType() {
-        return "quiz";
+        return "assignment";
     }
 
     @Override
@@ -537,10 +693,29 @@ class lectureVideos implements lecture{
         this.showall();
     }
 }
-class comment{
+class comment implements lecture {
+    private String comment;
+    private Date date;
+    private String commentor;
 
+    comment(String comment,String commentor){
+        this.commentor=commentor;
+        this.comment=comment;
+        this.date=new Date();
+    }
+
+    void show_com(){
+       System.out.println(this.comment+ " - " + this.commentor);
+       System. out.println(this.date + "\n");
+    }
+
+    @Override
+    public void printit() {
+     show_com();
+    }
 }
 class solution{
+    private int max_marks;
     private int marks_scored;
     private student stu;
     private String Instructor_check;
@@ -592,15 +767,15 @@ interface assessment_interface{
     public void submit_status(boolean stat);
     public void check_status(boolean stat);
     public String returnResponse();
-    public void Response();
+    public void Response(String resp);
     public String returnType();
     public int returnMarks();
     public ArrayList<solution> returnStudentSolutions();
 
 }
 interface user{
-    public String comments();
-    public void logout();
+    public String get_id();
+    public void logout() throws Exception;
 }
 
 class Reader1 {
