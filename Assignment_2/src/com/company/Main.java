@@ -705,13 +705,13 @@ class comment implements lecture {
     }
 
     void show_com(){
-       System.out.println(this.comment+ " - " + this.commentor);
-       System. out.println(this.date + "\n");
+        System.out.println(this.comment+ " - " + this.commentor);
+        System. out.println(this.date + "\n");
     }
 
     @Override
     public void printit() {
-     show_com();
+        show_com();
     }
 }
 class solution{
