@@ -1,9 +1,6 @@
 package com.company;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -53,17 +50,52 @@ public class Main {
         System.out.println("Enter the elements of matrix");
         for(int i=0;i<row;i++){
             for(int j=0;j<column;j++){
-                mat[i][j]=Reader1.nextInt();
+                mat[i][j]= (float) Reader1.nextDouble();
             }
         }
-        if(row==column){
+        boolean flag_singular=false;
+        boolean flag_upper=true;
+        boolean flag_ones=true;
+        boolean flag_null=true;
+        boolean flag_lower=true;
+        boolean flag_diagonal=true;
+        boolean flag_scalar=true;
+        boolean flag_identity=true;
+        boolean flag_symmetric=true;
+        boolean flag_skewSymmetric=true;
+        for(int i=0;i<row;i++){
+            for(int j=0;j<column;j++){
+                if(mat[i][j]!=0){
+                    flag_null=false;
+                    break;
+                }
+            }
+            if (!flag_null) {
+                break;
+            }
+        }
+        for(int i=0;i<row;i++){
+            for(int j=0;j<column;j++){
+                if(mat[i][j]!=1){
+                    flag_ones=false;
+                    break;
+                }
+            }
+            if(!flag_ones){
+                break;
+            }
+        }
+        if(row==column && flag_null==false && flag_ones==false){
+            if(row==1 && column==1){
+                singleton matrix=new singleton(mat);
+                matrix_list.add(matrix);
+            }
             if(determinant(mat,row,row)==0){
                 singular matrix=new singular(row,column,mat);
                 matrix_list.add(matrix);
+                flag_singular=true;
             }
             else{
-                boolean flag_upper=true;
-                boolean flag_lower=true;
                 for(int i=0;i<row;i++){
                     for(int j=0;j<column;j++){
                         if(i>j){
@@ -81,14 +113,150 @@ public class Main {
                     for(int j=0;j<column;j++){
                         if(i<j){
                             if(mat[i][j]!=0){
-                                flag_upper=false;
+                                flag_lower=false;
+                                break;
+                            }
+                        }
+                    }
+                    if(!flag_lower){
+                        break;
+                    }
+                }
+                for(int i=0;i<row;i++){
+                    for(int j=0;j<column;j++){
+                        if(i!=j){
+                            if(mat[i][j]!=0){
+                                flag_diagonal=false;
+                                break;
+                            }
+                        }
+                    }
+                    if(!flag_diagonal){
+                        break;
+                    }
+                }
+                if(flag_diagonal==true){
+                    for(int i=0;i<row-1;i++){
+                        for(int j=0;j<column-1;j++){
+                            if(i==j){
+                                if(mat[i][j]!=mat[i+1][j+1]){
+                                    flag_scalar=false;
+                                    break;
+                                }
+                            }
+                        }
+                        if(!flag_scalar){
+                            break;
+                        }
+                    }
+                    if(flag_scalar==true) {
+                        for (int i = 0; i < row; i++) {
+                            for (int j = 0; j < column; j++) {
+                                if (i == j) {
+                                    if (mat[i][j] != 1) {
+                                        flag_identity = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!flag_identity) {
+                                break;
                             }
                         }
                     }
                 }
-                if()
+                float[][] temp=trans(mat);
+                for(int i=0;i<row;i++){
+                    for(int j=0;j<column;j++){
+                        if(mat[i][j]!=temp[i][j]){
+                            flag_symmetric=false;
+                            break;
+                        }
+                    }
+                    if(!flag_symmetric){
+                        break;
+                    }
+                }
+                for(int i=0;i<row;i++){
+                    for(int j=0;j<column;j++){
+                        if(mat[i][j]!=-temp[i][j]){
+                            flag_skewSymmetric=false;
+                            break;
+                        }
+                    }
+                    if(!flag_skewSymmetric){
+                        break;
+                    }
+                }
             }
         }
+        else if(row!=column && flag_null==false &&flag_ones==false){
+            if(row==1){
+                column_matrix matrix=new column_matrix(column,mat);
+                matrix_list.add(matrix);
+            }
+            if(column==1){
+                row_matrix matrix=new row_matrix(row,mat);
+                matrix_list.add(matrix);
+            }
+        }
+        if(flag_null==true){
+            null_matrix matrix=new null_matrix(row,column);
+        }
+        if(flag_ones==true){
+            ones_matrix matrix=new ones_matrix(row,column);
+        }
+        else if(flag_singular==false) {
+            if (flag_identity == true) {
+                identity matrix = new identity(row);
+                matrix_list.add(matrix);
+            }
+            if (flag_identity == false && flag_scalar == true) {
+                scalar matrix = new scalar(row, mat[1][1]);
+                matrix_list.add(matrix);
+            }
+            if ((flag_identity == false && flag_scalar == false && flag_diagonal == true)|| flag_upper==true && flag_lower==true) {
+                ArrayList<Float> alpha = new ArrayList<>();
+                for (int p = 0; p < row; p++) {
+                    for (int q = 0; q < column; q++) {
+                        if (p == q) {
+                            alpha.add(mat[p][q]);
+                        }
+                    }
+                }
+                diagonal matrix = new diagonal(row, alpha);
+                matrix_list.add(matrix);
+
+            }
+            if(flag_upper==true && flag_lower==false){
+                upper_triangular matrix=new upper_triangular(row,column,mat);
+                matrix_list.add(matrix);
+            }
+            if(flag_upper==false && flag_lower==true){
+                lower_triangular matrix=new lower_triangular(row,column,mat);
+                matrix_list.add(matrix);
+            }
+            if(flag_symmetric==true && flag_skewSymmetric==false){
+                symmetric matrix=new symmetric(row,column,mat);
+                matrix_list.add(matrix);
+            }
+            if(flag_symmetric==false && flag_skewSymmetric==true){
+                skew_symmetric matrix=new skew_symmetric(row,column,mat);
+                matrix_list.add(matrix);
+
+            }
+        }
+    }
+    static float[][] trans(float[][] mat)
+    {
+        int row, col;
+        float[][] trans = new float[3][3];
+        for(row=0;row<3;row++) {
+            for (col = 0; col < 3; col++) {
+                trans[row][col] = mat[col][row];
+            }
+        }
+        return trans;
     }
     public static String type(matrix mat){
 
@@ -248,8 +416,8 @@ class rectangular_matrix extends matrix{
 }
 class row_matrix extends rectangular_matrix {
 
-    row_matrix( int row, int column,float[][] mat) {
-        super(row, column,mat);
+    row_matrix( int column,float[][] mat) {
+        super(1,column,mat);
     }
     String getType(){
         return "Row Matrix";
@@ -257,8 +425,8 @@ class row_matrix extends rectangular_matrix {
 }
 class column_matrix extends rectangular_matrix {
 
-    column_matrix(int row, int column,float[][] mat) {
-        super(row, column,mat);
+    column_matrix(int row,float[][] mat) {
+        super(row, 1,mat);
     }
     String getType(){
         return "Column Matrix";
@@ -350,28 +518,39 @@ class singular extends square_matrix{
         return "Singular Matrix";
     }
 }
-class diagonal extends square_matrix{
+class singleton extends square_matrix{
 
-    diagonal( int row, int column,float[][] mat) {
-        super( row, column,mat);
+    singleton( float[][] mat) {
+        super(1,1, mat);
+    }
+    String getType(){
+        return "Singleton Matrix";
+    }
+}
+class diagonal extends square_matrix{
+    private ArrayList<Float> alpha=new ArrayList<>();
+    diagonal( int row,ArrayList<Float> alpha) {
+        super( row, row,null);
+        this.alpha=alpha;
     }
     String getType(){
         return "Diagonal Matrix";
     }
 }
 class scalar extends diagonal{
-
-    scalar(int row, int column,float[][] mat) {
-        super( row, column,mat);
+    private float scal;
+    scalar(int row,float scal) {
+        super( row,null);
+        this.scal=scal;
     }
     String getType(){
         return "Scalar Matrix";
     }
 }
-class identity extends diagonal{
+class identity extends scalar{
 
-    identity( int row, int column,float[][] mat) {
-        super( row, column,mat);
+    identity( int row) {
+        super(row,1);
     }
 
     String getType(){
@@ -397,10 +576,10 @@ class skew_symmetric extends square_matrix{
     }
 }
 class ones_matrix extends matrix{
-    protected float[][] mat;
-    ones_matrix( int row, int column,float[][] mat) {
+
+    ones_matrix( int row,int column) {
         super( row, column);
-        this.mat=mat;
+
     }
 
     @Override
@@ -454,10 +633,8 @@ class ones_matrix extends matrix{
     }
 }
 class null_matrix extends matrix{
-    protected float[][] mat;
-    null_matrix( int row, int column,float[][] mat) {
-        super(row, column);
-        this.mat=mat;
+    null_matrix( int row,int column) {
+        super(row,column);
     }
 
     @Override
