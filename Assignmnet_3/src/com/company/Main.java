@@ -3,6 +3,7 @@ package com.company;
 import javax.xml.parsers.SAXParser;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -28,20 +29,24 @@ public class Main {
                     11. Compute A+A^T
                     12. Compute eigen vectors and values
                     13. Solve linear equations
-                    14. show all matrix""");
+                    14. Use a Singleton matrix as a scalar matrix
+                    15. show all matrix""");
             System.out.println("Select an option");
             int selection = Reader1.nextInt();
             if (selection == 1) {
                 add_matrix();
             }
             if(selection==2){
-
+                createMat();
+            }
+            if(selection==3){
+                changeEl();
             }
             if(selection==4){
                 display_all_types();
             }
             if(selection==15){
-
+                show_all();
             }
             if (selection == 5) {
                 arithmeticOps();
@@ -51,6 +56,9 @@ public class Main {
             }
             if(selection==7){
                 transpose();
+            }
+            if(selection==8){
+                inverse();
             }
             if(selection==9){
                 compute_mean();
@@ -62,7 +70,13 @@ public class Main {
                 atnt();
             }
             if(selection==12){
-
+                eigen();
+            }
+            if(selection==13){
+                linear_eq();
+            }
+            if(selection==14){
+                singlee_to_scalar();
             }
         }
     }
@@ -116,11 +130,11 @@ public class Main {
                 break;
             }
         }
-        if(flag_null ==false && flag_ones==false){
+        if(flag_null ==false && flag_ones==false && row==column){
             if (row == 1 && column == 1) {
                 flag_singleton=true;
                 System.out.println("singleton");
-                singleton matrix = new singleton(mat);
+                singleton matrix = new singleton(mat[0][0]);
                 matrix_list.add(matrix);
             }
             if (determinant(mat, row, row) == 0) {
@@ -266,25 +280,25 @@ public class Main {
              flag_symmetric = false;
              flag_skewSymmetric = false;
 
-             if (row == 1) {
+             if (column == 1) {
                  System.out.println("column");
                  flag_col=true;
-                 column_matrix matrix = new column_matrix(column, mat);
+                 column_matrix matrix = new column_matrix(row, mat);
                  matrix_list.add(matrix);
              }
-             if (column == 1) {
+             if (row == 1) {
                  flag_row=true;
                  System.out.println("row");
-                 row_matrix matrix = new row_matrix(row, mat);
+                 row_matrix matrix = new row_matrix(column, mat);
                  matrix_list.add(matrix);
-             } else {
+             } else if(flag_col==false && flag_row==false) {
                  rectangular_matrix matrix = new rectangular_matrix(row, column, mat);
                  System.out.println("rectangular");
                  matrix_list.add(matrix);
              }
          }
 
-         if(flag_singular==false && flag_rectangle==false && flag_ones==false && flag_null==false) {
+         if(flag_singular==false && flag_rectangle==false && flag_ones==false && flag_null==false &&flag_singleton==false) {
              if (flag_identity == true) {
                  System.out.println("identity");
                  identity matrix = new identity(row);
@@ -336,17 +350,54 @@ public class Main {
              square_matrix matrix = new square_matrix(row, column, mat);
              matrix_list.add(matrix);
          }
+        ArrayList<String> alpha=new ArrayList<>();
+        if(flag_singleton==true){
+            alpha.add("Singular");
+        }
+        if(flag_col==true){
+            alpha.add("Column");
+        }
+        if(flag_diagonal==true){
+            alpha.add("Diagonal");
+        }
+        if(flag_identity==true){
+            alpha.add("Identity");
+        }
+        if(flag_null==true){
+            alpha.add("Null");
+        }
+        if(flag_ones==true){
+            alpha.add("Ones");
+        }
+        if(flag_lower==true){
+            alpha.add("Lower Triangular");
+        }
+        if (flag_upper == true) {
+            alpha.add("Upper Triangular");
+        }
+        if (flag_row==true) {
+            alpha.add("Row");
+        }
+        if (flag_scalar == true) {
+            alpha.add("Scalar");
+        }
+        if(flag_square==true){
+            alpha.add("Square");
+        }
+        if(flag_skewSymmetric==true){
+            alpha.add("Skew Symmetric");
+        }
+        if (flag_symmetric == true) {
+            alpha.add("Symmetric");
+        }
+        if(flag_rectangle==true){
+            alpha.add("Rectangle ");
+        }
+        if(flag_singleton==true){
+            alpha.add("Singleton");
+        }
+        matrix_list.get(matrix_list.size()-1).set_types(alpha);
 
-        System.out.println(flag_singular);
-        System.out.println(flag_upper);
-        System.out.println(flag_ones);
-        System.out.println(flag_null);
-        System.out.println(flag_lower);
-        System.out.println(flag_diagonal);
-        System.out.println(flag_scalar);
-        System.out.println(flag_identity);
-        System.out.println(flag_symmetric);
-        System.out.println(flag_skewSymmetric);
     }
     static void getCofactor(float mat[][], float temp[][],
                             int p, int q, int n)
@@ -445,6 +496,7 @@ public class Main {
             }
         }
         if(choice==2){
+            show_mat_list();
             float first_mat[][];
             float second_mat[][];
             int in1=Reader1.nextInt();
@@ -474,20 +526,63 @@ public class Main {
             }
         }
         if(choice==3){
+            show_mat_list();
             float first_mat[][];
             float second_mat[][];
             int in1=Reader1.nextInt();
             int in2=Reader1.nextInt();
-            if(matrix_list.get(in1-1).getColumn()==matrix_list.get(in2-1).getRow()) {
+            if(matrix_list.get(in1-1).getType().equals("Scalar Matrix")){
+                second_mat=matrix_list.get(in2-1).getMat();
+                float p=matrix_list.get(in1-1).getMat()[0][0];
+                int rows=matrix_list.get(in2-1).getRow();
+                int col=matrix_list.get(in2-1).getColumn();
+                float[][] temp = new float[rows][col];
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < col; j++) {
+                            temp[i][j] =  p* second_mat[i][j];
+                    }
+                }
+                System.out.println("\nResultant Matrix:");
+                System.out.println(rows);
+                System.out.println(col);
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < col; j++)
+                        System.out.print(temp[i][j] + " ");
+                    System.out.println();
+                }
+            }
+            if(matrix_list.get(in2-1).getType().equals("Scalar Matrix")){
+                second_mat=matrix_list.get(in1-1).getMat();
+                float p=matrix_list.get(in2-1).getMat()[0][0];
+                int rows=matrix_list.get(in1-1).getRow();
+                System.out.println(rows);
+                int col=matrix_list.get(in1-1).getColumn();
+                float[][] temp = new float[rows][col];
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < col; j++) {
+                            temp[i][j] =  p* second_mat[i][j];
+                    }
+                }
+                System.out.println(matrix_list.get(in1-1).getType());
+                System.out.println(rows);
+                System.out.println(col);
+                System.out.println("\nResultant Matrix:");
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < col; j++)
+                        System.out.print(temp[i][j] + " ");
+                    System.out.println();
+                }
+            }
+            else if(matrix_list.get(in1-1).getColumn()==matrix_list.get(in2-1).getRow()) {
                 first_mat=matrix_list.get(in1-1).getMat();
                 second_mat=matrix_list.get(in2-1).getMat();
-                int rows=matrix_list.get(in1).getRow();
-                int col=matrix_list.get(in2).getColumn();
+                int rows=matrix_list.get(in1-1).getRow();
+                int col=matrix_list.get(in2-1).getColumn();
                 if(matrix_list.get(in1-1).getType().equals("Null Matrix") || matrix_list.get(in2-1).getType().equals("Null Matrix")){
                     System.out.println("Null matrix of the same order is printed");
                 }
                 else {
-                    int columns = matrix_list.get(in1).getColumn();
+                    int columns = matrix_list.get(in1-1).getColumn();
                     float[][] temp = new float[rows][col];
                     for (int i = 0; i < rows; i++) {
                         for (int j = 0; j < col; j++) {
@@ -509,41 +604,39 @@ public class Main {
             }
         }
         if (choice == 4) {
-//            float first_mat[][];
-//            float second_mat[][];
-//            int in1 = Reader1.nextInt();
-//            int in2 = Reader1.nextInt();
-//            if (matrix_list.get(in2).getType().equals("Singular Matrix")) {
-//                System.out.println("Singular matrix provided");
-//                return;
-//            }
-//            if (matrix_list.get(in1).getColumn() == matrix_list.get(in2).getRow() && matrix_list.get(in2).getRow() == matrix_list.get(in2).getColumn()) {
-//                first_mat=matrix_list.get(in1).getMat();
-//                second_mat=matrix_list.get(in2).getMat();
-//                int rows=matrix_list.get(in1).getRow();
-//                int col=matrix_list.get(in2).getColumn();
-//                float[][] temp1 = new float[rows][col];
-//                temp1 = inverse(temp, columns);
-//                int mat3[][] = new int[rows][columns];
-//
-//
-//                for (int i = 0; i < rows; i++) {
-//                    for (int j = 0; j < columns; j++) {
-//                        for (int k = 0; k < columns; k++)
-//                            mat3[i][j] += mat[i][k] * temp1[k][j];
-//                    }
-//                }
-//
-//
-//                System.out.println("\nResultant Matrix:");
-//                for (int i = 0; i < rows; i++) {
-//                    for (int j = 0; j < columns; j++)
-//                        System.out.print(mat3[i][j] + " ");
-//                    System.out.println();
-//                }
-//
-//            }
-//
+            float first_mat[][];
+            float second_mat[][];
+            int in1 = Reader1.nextInt();
+            int in2 = Reader1.nextInt();
+            if (matrix_list.get(in2).getType().equals("Singular Matrix")) {
+                System.out.println("Singular matrix provided");
+                return;
+            }
+            if (matrix_list.get(in1).getColumn() == matrix_list.get(in2).getRow() && matrix_list.get(in2).getRow() == matrix_list.get(in2).getColumn()) {
+                first_mat=matrix_list.get(in1).getMat();
+                second_mat=matrix_list.get(in2).getMat();
+                int rows=matrix_list.get(in1).getRow();
+                int col=matrix_list.get(in2).getColumn();
+                int mat3[][] = new int[rows][col];
+                float[][] temp=matrix_list.get(in2-1).inverse();
+
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < col; j++) {
+                        for (int k = 0; k < col; k++)
+                            mat3[i][j] += first_mat[i][k] * temp[k][j];
+                    }
+                }
+
+
+                System.out.println("\nResultant Matrix:");
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < col; j++)
+                        System.out.print(mat3[i][j] + " ");
+                    System.out.println();
+                }
+
+            }
+
       }
     }
     public static void transpose() throws IOException {
@@ -581,7 +674,7 @@ public class Main {
         show_mat_list();
         System.out.println("Choose a matrix ");
         int choice=Reader1.nextInt();
-        System.out.println(matrix_list.get(choice-1).getClass());
+        matrix_list.get(choice-1).get_types();
 
 
     }
@@ -646,6 +739,380 @@ public class Main {
         }
     }
 
+    public static void singlee_to_scalar() throws IOException {
+        System.out.println("Do you want to convert singleton matrix to scalar? ");
+        String ans=Reader1.nextLine();
+        if(ans.toLowerCase().equals("yes")){
+            show_mat_list();
+            System.out.println("Choose a singleton matrix");
+            int choice=Reader1.nextInt();
+            if(matrix_list.get(choice-1).getType().equals("Singleton Matrix")){
+                float alpha=matrix_list.get(choice-1).getMat()[0][0];
+                scalar matrix=new scalar(1,alpha);
+                matrix_list.add(matrix);
+                matrix_list.remove(matrix_list.get(choice-1));
+            }
+            else{
+                System.out.println("Select a singleton matrix");
+            }
+        }
+    }
+
+    public static void inverse() throws IOException {
+        show_mat_list();
+        System.out.println("Select a matrix for further calculations");
+        int choice=Reader1.nextInt();
+        float[][] temp;
+        temp=matrix_list.get(choice-1).inverse();
+        System.out.println("\nInverse of matrix is:");
+            for (int i = 0; i < 2; ++i) {
+                for (int j = 0; j < 2; ++j)
+                    System.out.print(temp[i][j]+" ");
+                System.out.print("\n");
+            }
+
+    }
+    public static void createMat() throws IOException {
+        System.out.println("Choose a type of matrix you want to create");
+        System.out.println("""
+                1. Rectangular Matrix
+                2. Row Matrix
+                3. Column Matrix
+                4. Square Matrix
+                5. Symmetric Matrix
+                6. Skew-symmetric Matrix
+                7. Upper-triangular Matrix
+                8. Lower-triangular Matrix
+                9. Singular Matrix
+                10. Diagonal Matrix
+                11. Scalar Matrix
+                12. Identity Matrix
+                13. Singleton Matrix
+                14. Ones Matrix
+                15. Null Matrix
+                """);
+        int choice =Reader1.nextInt();
+        if(choice==1){
+            System.out.println("Enter the dimensions");
+            int row=Reader1.nextInt();
+            int col=Reader1.nextInt();
+            float[][] matrix=new float[row][col];
+            int p=row*col;
+            int start=0;
+            for(int i=0;i<row;i++){
+                for(int j=0;j<col;j++){
+                    matrix[i][j]=start;
+                }
+                start=start+1;
+            }
+            new rectangular_matrix(row,col,matrix);
+        }
+        if(choice==2){
+            System.out.println("Enter the dimensions");
+            int col=Reader1.nextInt();
+            float[][] matrix=new float[1][col];
+            int p=1*col;
+            int start=0;
+            for(int i=0;i<1;i++){
+                for(int j=0;j<col;j++){
+                    matrix[i][j]=start;
+                }
+                start=start+1;
+            }
+            new row_matrix(col,matrix);
+        }
+        if(choice==3){
+            System.out.println("Enter the dimensions");
+            int col=Reader1.nextInt();
+            float[][] matrix=new float[col][1];
+            int p=1*col;
+            int start=0;
+            for(int i=0;i<col;i++){
+                for(int j=0;j<1;j++){
+                    matrix[i][j]=start;
+                }
+                start=start+1;
+            }
+            new row_matrix(col,matrix);
+        }
+        if(choice==4){
+            System.out.println("Enter the dimensions");
+            int row=Reader1.nextInt();
+            int col=row;
+            float[][] matrix=new float[row][col];
+            int p=row*col;
+            int start=0;
+            for(int i=0;i<row;i++){
+                for(int j=0;j<col;j++){
+                    matrix[i][j]=start;
+                }
+                start=start+1;
+            }
+            new rectangular_matrix(row,col,matrix);
+        }
+        if(choice==5){
+            System.out.println("Enter the rows");
+            int rows=Reader1.nextInt();
+            if(rows==2){
+                float[][] temp=new float[][]{{1,2},{2,2}};
+                new symmetric(rows,rows,temp);
+            }
+            if(rows==3){
+                float[][] temp=new float[][]{{1,2,3},{2,4,5},{3,5,8}};
+                new symmetric(rows,rows,temp);
+            }
+        }
+        if(choice==6){
+            System.out.println("Enter the rows");
+            int rows=Reader1.nextInt();
+            if(rows==2){
+                float[][] temp=new float[][]{{0,-9},{0,0}};
+                new skew_symmetric(rows,rows,temp);
+            }
+            if(rows==3){
+                float[][] temp=new float[][]{{0,1,-2},{-1,0,3},{2,-3,0}};
+                new skew_symmetric(rows,rows,temp);
+            }
+        }
+        if(choice==7){
+            System.out.println("Enter the dimension");
+            int rows=Reader1.nextInt();
+            if(rows==2){
+                float[][] temp=new float[][]{{1,2},{0,3}};
+                new lower_triangular(rows, rows,temp);
+            }
+            if(rows==3)
+            {
+                float[][] temp=new float[][]{{1,2,3},{0,3,2},{0,0,1}};
+                new lower_triangular(rows, rows,temp);
+            }
+        }
+        if(choice==8){
+            System.out.println("Enter the dimension");
+            int rows=Reader1.nextInt();
+            if(rows==2){
+                float[][] temp=new float[][]{{1,0},{2,3}};
+                new lower_triangular(rows, rows,temp);
+            }
+            if(rows==3)
+            {
+                float[][] temp=new float[][]{{1,0,0},{2,3,0},{6,5,1}};
+                new lower_triangular(rows, rows,temp);
+            }
+        }
+        if(choice==9){
+            System.out.println("Enter the number of rows");
+            int rows=Reader1.nextInt();
+            float[][] temp=new float[rows][rows];
+            if(rows==1){
+                temp[0][0]=0;
+                new singular(rows,rows,temp);
+            }
+            if(rows==2){
+                temp[0][0]=2;
+                temp[0][1]=3;
+                temp[1][0]=3;
+                temp[1][1]=2;
+                new singular(rows,rows,temp);
+            }
+            if(rows==3){
+                temp= new float[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+                new singular(rows,rows,temp);
+            }
+        }
+        if(choice==10){
+            System.out.println("Enter number of rows");
+            int row=Reader1.nextInt();
+            ArrayList<Float> temp = new ArrayList<>();
+            float start =1;
+            for(int i=0;i<row;i++){
+                temp.set(i, start);
+                start=start+1;
+            }
+            new diagonal(row,temp);
+        }
+        if(choice==11){
+            System.out.println("Enter number of rows");
+            int row=Reader1.nextInt();
+            new scalar(row,5);
+        }
+        if(choice==12){
+            System.out.println("Enter number of rows");
+            int row=Reader1.nextInt();
+            new identity(row);
+        }
+        if(choice==13){
+            System.out.println("Enter the value");
+            new singleton(3);
+        }
+        if(choice==14){
+            System.out.println("Enter the dimensions");
+            int row=Reader1.nextInt();
+            int col=Reader1.nextInt();
+            new ones_matrix(row,col);
+        }
+        if(choice==15){
+            System.out.println("Enter the dimensions");
+            int row=Reader1.nextInt();
+            int col=Reader1.nextInt();
+            new null_matrix(row,col);
+
+        }
+
+    }
+
+    public static void changeEl() throws IOException {
+        show_mat_list();
+        System.out.println("Select a matrix");
+        int choice=Reader1.nextInt();
+        if(matrix_list.get(choice-1).getType().equals("Null Matrix") ||matrix_list.get(choice-1).getType().equals("Ones Matrix") || matrix_list.get(choice-1).getType().equals("Identity matrix") ){
+            System.out.println("No change can be done on this type of matrix");
+        }
+
+        else {
+            System.out.println("How many values do you want to change");
+            int number=Reader1.nextInt();
+            for (int i = 0; i < number; i++) {
+                System.out.println("Enter the row of the change");
+                int row = Reader1.nextInt();
+                System.out.println("Enter the column of the change");
+                int col = Reader1.nextInt();
+                System.out.println("Enter the value change");
+                int change = Reader1.nextInt();
+                matrix_list.get(choice - 1).getMat()[row][col] = change;
+            }
+            int rows = matrix_list.get((choice - 1)).getRow();
+            int col = matrix_list.get((choice - 1)).getColumn();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < col; j++) {
+                    System.out.print(matrix_list.get(choice - 1).getMat()[i][j] + " ");
+                }
+                System.out.println(" ");
+            }
+        }
+    }
+
+    public static void linear_eq() throws IOException {
+        show_mat_list();
+        System.out.println("Select two matrices for further calculation");
+        int first=Reader1.nextInt();
+        int second=Reader1.nextInt();
+        System.out.println(matrix_list.get(first-1).getColumn());
+        System.out.println(matrix_list.get(second-1).getRow());
+        if(matrix_list.get(first-1).getColumn()!=matrix_list.get(second-1).getRow() || matrix_list.get(first-1).inverse()==null ){
+            System.out.println("Cannot be calculated");
+        }
+        else{
+            int rows=matrix_list.get(first-1).getRow();
+            int columns=matrix_list.get(first-1).getColumn();
+            float[][] temp=new float[rows][columns];
+            float[][] inverted=matrix_list.get(first-1).inverse();
+
+            int col=matrix_list.get(second-1).getColumn();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < col; j++) {
+                    for (int k = 0; k < columns; k++)
+                        temp[i][j] += inverted[i][k] * matrix_list.get(second-1).getMat()[k][j];
+                }
+            }
+            System.out.println("\nResultant Matrix:");
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < col; j++)
+                    System.out.print(temp[i][j] + " ");
+                System.out.println();
+            }
+
+        }
+    }
+
+    public static void show_all() throws IOException {
+        System.out.println("Select a type");
+        System.out.println("""
+                1. Rectangular Matrix
+                2. Row Matrix
+                3. Column Matrix
+                4. Square Matrix
+                5. Symmetric Matrix
+                6. Skew-symmetric Matrix
+                7. Upper-triangular Matrix
+                8. Lower-triangular Matrix
+                9. Singular Matrix
+                10. Diagonal Matrix
+                11. Scalar Matrix
+                12. Identity Matrix
+                13. Singleton Matrix
+                14. Ones Matrix
+                15. Null Matrix""");
+        int choice=Reader1.nextInt();
+        String[] predefined={"Rectangular",
+                "Row",
+                "Column",
+                "Square",
+                "Symmetric",
+                "Skew Symmetric",
+                "Upper Triangular",
+                "Lower Triangular",
+                "Singular",
+                "Diagonal",
+                "Scalar",
+                "Identity",
+                "Singleton",
+                "Ones",
+                "Null"};
+            for(int i=0;i<matrix_list.size();i++){
+                ArrayList<String> temp=matrix_list.get(i).return_types();
+                for(int j=0;j<temp.size();j++){
+                    if(temp.get(j).equals(predefined[choice-1])){
+                        for (int k = 0; k < matrix_list.get(i).getRow(); k++) {
+                            for (int p = 0; p < matrix_list.get(i).getColumn(); p++) {
+                                System.out.print(matrix_list.get(i).getMat()[k][p] + " ");
+                            }
+                            System.out.println();
+                        }
+                }
+            }
+        }
+    }
+
+    public static void eigen() throws IOException {
+        show_mat_list();
+        int input=Reader1.nextInt();
+        if(matrix_list.get(input-1).getRow()!=2 && matrix_list.get(input-1).getColumn()!=2){
+            System.out.println("Eigen value cannot be calculated");
+        }
+        else {
+            float[][] temp = matrix_list.get(input - 1).getMat();
+            float a = temp[0][0];
+            float b = temp[0][1];
+            float c = temp[1][0];
+            float d = temp[1][1];
+            float to = (((a + d) * (a + d)) - 4 * 1 * (a * d - b * c));
+            if (to < 0) {
+                System.out.println("cannot be calculated");
+            }
+            else {
+                float[][] answer=new float[2][2];
+                float ans = square(to);
+                float l1 = ((a + d) + ans) / 2;
+                float l2 = ((a + d) - ans) / 2;
+                System.out.println(l1);
+                System.out.println(l2);
+            }
+        }
+    }
+    public static float square(float number){
+        float t;
+
+        float squareroot = number / 2;
+
+        do {
+            t = squareroot;
+            squareroot = (t + (number / t)) / 2;
+        } while ((t - squareroot) != 0);
+
+        return squareroot;
+    }
+
     public static void element_wise() throws IOException {
         show_mat_list();
         System.out.println("Select 2 matrices for further calculations");
@@ -697,9 +1164,16 @@ public class Main {
     }
 
 }
+
 abstract class matrix {
+    protected ArrayList<String> list;
     protected int row, column;
+    protected static int inx=0;
+    protected int index;
     matrix(int row,int column){
+        this.list=null;
+        this.index=inx;
+        inx++;
         this.row=row;
         this.column=column;
     }
@@ -712,7 +1186,6 @@ abstract class matrix {
 
     public abstract float getdet(float[][] mat, int n, int N);
 
-
     public abstract float[][] transpose(float[][] mat);
 
     abstract public void rowMean(float[][] mat);
@@ -723,8 +1196,20 @@ abstract class matrix {
 
     abstract public float[][] getMat();
 
+    abstract public float[][] inverse();
+
     String getType() {
         return null;
+    }
+
+    public void set_types(ArrayList<String> list){
+        this.list=list;
+    }
+    public void get_types(){
+        System.out.println(list);
+    }
+    public ArrayList<String> return_types(){
+        return list;
     }
 }
 
@@ -819,6 +1304,16 @@ class rectangular_matrix extends matrix{
         return mat;
     }
 
+
+
+    @Override
+    public float[][] inverse() {
+        System.out.println("Inverse cannot be calculated");
+        return null;
+    }
+
+
+
     @Override
     String getType() {
         return ("Rectangular Matrix");
@@ -841,6 +1336,7 @@ class column_matrix extends rectangular_matrix {
     String getType(){
         return "Column Matrix";
     }
+
 }
 class square_matrix extends  matrix{
     protected float[][] mat;
@@ -973,6 +1469,40 @@ class square_matrix extends  matrix{
         return mat;
     }
 
+
+
+    @Override
+    public float[][] inverse()  {
+        int n=this.row;
+        float[][] A=new float[n][n];
+        if (this.row == 2) {
+            int i, j;
+            float det, temp;
+            det = (this.mat[0][0] *this.mat[1][1]) - (this.mat[0][1] * this.mat[1][0]);
+            A[0][0] = this.mat[1][1]/det;
+            A[1][1] = this.mat[0][0]/det;
+            A[0][1] = -this.mat[0][1]/det;
+            A[1][0] = -this.mat[1][0]/det;
+//            System.out.println("\nInverse of matrix is:");
+//            for (i = 0; i < 2; ++i) {
+//                for (j = 0; j < 2; ++j)
+//                    System.out.print((A[i][j] / det) + " ");
+//                System.out.print("\n");
+//            }
+
+        }
+        if(n==3){
+            int i, j;
+            float det = 0;
+            for(i = 0; i < 3; i++)
+                det = det + (this.mat[0][i] * (this.mat[1][(i+1)%3] * this.mat[2][(i+2)%3] - this.mat[1][(i+2)%3] * this.mat[2][(i+1)%3]));
+            for(i = 0; i < 3; ++i) {
+                for(j = 0; j < 3; ++j)
+                    A[i][j]=((((this.mat[(j+1)%3][(i+1)%3] * this.mat[(j+2)%3][(i+2)%3]) - (this.mat[(j+1)%3][(i+2)%3] * this.mat[(j+2)%3][(i+1)%3]))/ det));
+            }
+        }
+        return  A;
+    }
     @Override
     String getType() {
         return "Square Matrix";
@@ -1044,12 +1574,21 @@ class singular extends square_matrix{
     }
 }
 class singleton extends square_matrix{
-
-    singleton( float[][] mat) {
-        super(1,1, mat);
+    private float val;
+    singleton( float val) {
+        super(1,1, null);
+        this.val=val;
     }
     String getType(){
         return "Singleton Matrix";
+    }
+
+    @Override
+    public float[][] getMat() {
+        float[][] temp=new float[1][1];
+        temp[0][0]=this.val;
+        return temp;
+
     }
 
     @Override
@@ -1090,6 +1629,18 @@ class diagonal extends square_matrix{
         }
         return det;
     }
+
+    @Override
+    public float[][] getMat() {
+        float[][] temp=new float[row][row];
+        for(int i=0;i<row;i++){
+            for(int j=0;j<row;j++){
+                if(i==j)
+                temp[i][j]= this.alpha.get(i);
+            }
+        }
+        return temp;
+    }
 }
 class scalar extends diagonal{
     private float scal;
@@ -1109,6 +1660,32 @@ class scalar extends diagonal{
         }
         return det;
     }
+
+    @Override
+    public float[][] getMat() {
+        float[][] temp=new float[row][row];
+        for(int i=0;i<row;i++){
+            for(int j=0;j<row;j++){
+                if(i==j)
+                    temp[i][j]= this.scal;
+            }
+        }
+        return temp;
+    }
+
+    @Override
+    public float[][] inverse() {
+        int n=this.row;
+        float[][] temp=new float[n][n];
+        for(int i=0;i<row;i++){
+            for(int j=0;j<row;j++){
+                if(i==j){
+                    temp[i][j]=1/this.scal;
+                }
+            }
+        }
+        return temp;
+    }
 }
 class identity extends scalar{
 
@@ -1123,6 +1700,23 @@ class identity extends scalar{
     @Override
     public float getdet(float[][] mat, int n, int N) {
         return 1;
+    }
+
+    @Override
+    public float[][] getMat() {
+        float[][] temp=new float[row][row];
+        for(int i=0;i<row;i++){
+            for(int j=0;j<row;j++){
+                if(i==j)
+                    temp[i][j]=1;
+            }
+        }
+        return temp;
+    }
+
+    @Override
+    public float[][] inverse() {
+        return this.mat;
     }
 }
 class symmetric extends square_matrix{
@@ -1208,6 +1802,14 @@ class ones_matrix extends matrix{
         return null;
     }
 
+
+
+    @Override
+    public float[][] inverse() {
+
+        return null;
+    }
+
     @Override
     String getType() {
         return "Ones Matrix";
@@ -1270,6 +1872,13 @@ class null_matrix extends matrix{
             float[][] temp={{0,0,0},{0,0,0},{0,0,0}};
             return temp;
         }
+        return null;
+    }
+
+
+
+    @Override
+    public float[][] inverse() {
         return null;
     }
 
