@@ -93,21 +93,21 @@ public class Main {
                 mat[i][j] = (float) Reader1.nextDouble();
             }
         }
-         boolean flag_row=false;
-         boolean flag_col=false;
-         boolean flag_singleton=false;
-         boolean flag_square=false;
-         boolean flag_rectangle=false;
-         boolean flag_singular = false;
-         boolean flag_upper = true;
-         boolean flag_ones = true;
-         boolean flag_null = true;
-         boolean flag_lower = true;
-         boolean flag_diagonal = true;
-         boolean flag_scalar = true;
-         boolean flag_identity = true;
-         boolean flag_symmetric = true;
-         boolean flag_skewSymmetric = true;
+        boolean flag_row=false;
+        boolean flag_col=false;
+        boolean flag_singleton=false;
+        boolean flag_square=false;
+        boolean flag_rectangle=false;
+        boolean flag_singular = false;
+        boolean flag_upper = true;
+        boolean flag_ones = true;
+        boolean flag_null = true;
+        boolean flag_lower = true;
+        boolean flag_diagonal = true;
+        boolean flag_scalar = true;
+        boolean flag_identity = true;
+        boolean flag_symmetric = true;
+        boolean flag_skewSymmetric = true;
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
                 if (mat[i][j] != 0) {
@@ -270,86 +270,86 @@ public class Main {
             ones_matrix matrix=new ones_matrix(row,column);
             matrix_list.add(matrix);
         }
-         if(row!=column && flag_null==false &&flag_ones==false) {
-             flag_rectangle = true;
-             flag_upper = false;
-             flag_lower = false;
-             flag_diagonal = false;
-             flag_scalar = false;
-             flag_identity = false;
-             flag_symmetric = false;
-             flag_skewSymmetric = false;
+        if(row!=column && flag_null==false &&flag_ones==false) {
+            flag_rectangle = true;
+            flag_upper = false;
+            flag_lower = false;
+            flag_diagonal = false;
+            flag_scalar = false;
+            flag_identity = false;
+            flag_symmetric = false;
+            flag_skewSymmetric = false;
 
-             if (column == 1) {
-                 System.out.println("column");
-                 flag_col=true;
-                 column_matrix matrix = new column_matrix(row, mat);
-                 matrix_list.add(matrix);
-             }
-             if (row == 1) {
-                 flag_row=true;
-                 System.out.println("row");
-                 row_matrix matrix = new row_matrix(column, mat);
-                 matrix_list.add(matrix);
-             } else if(flag_col==false && flag_row==false) {
-                 rectangular_matrix matrix = new rectangular_matrix(row, column, mat);
-                 System.out.println("rectangular");
-                 matrix_list.add(matrix);
-             }
-         }
+            if (column == 1) {
+                System.out.println("column");
+                flag_col=true;
+                column_matrix matrix = new column_matrix(row, mat);
+                matrix_list.add(matrix);
+            }
+            if (row == 1) {
+                flag_row=true;
+                System.out.println("row");
+                row_matrix matrix = new row_matrix(column, mat);
+                matrix_list.add(matrix);
+            } else if(flag_col==false && flag_row==false) {
+                rectangular_matrix matrix = new rectangular_matrix(row, column, mat);
+                System.out.println("rectangular");
+                matrix_list.add(matrix);
+            }
+        }
 
-         if(flag_singular==false && flag_rectangle==false && flag_ones==false && flag_null==false &&flag_singleton==false) {
-             if (flag_identity == true) {
-                 System.out.println("identity");
-                 identity matrix = new identity(row);
-                 matrix_list.add(matrix);
-             }
-             if (flag_identity == false && flag_scalar == true) {
-                 System.out.println("scalar");
-                 scalar matrix = new scalar(row, mat[1][1]);
-                 matrix_list.add(matrix);
-             }
-             if ((flag_identity == false && flag_scalar == false && flag_diagonal == true) && flag_upper == true && flag_lower == true) {
-                 ArrayList<Float> alpha = new ArrayList<>();
-                 for (int p = 0; p < row; p++) {
-                     for (int q = 0; q < column; q++) {
-                         if (p == q) {
-                             alpha.add(mat[p][q]);
-                         }
-                     }
-                 }
-                 System.out.println("diagonal");
-                 diagonal matrix = new diagonal(row, alpha);
-                 matrix_list.add(matrix);
+        if(flag_singular==false && flag_rectangle==false && flag_ones==false && flag_null==false &&flag_singleton==false) {
+            if (flag_identity == true) {
+                System.out.println("identity");
+                identity matrix = new identity(row);
+                matrix_list.add(matrix);
+            }
+            if (flag_identity == false && flag_scalar == true) {
+                System.out.println("scalar");
+                scalar matrix = new scalar(row, mat[1][1]);
+                matrix_list.add(matrix);
+            }
+            if ((flag_identity == false && flag_scalar == false && flag_diagonal == true) && flag_upper == true && flag_lower == true) {
+                ArrayList<Float> alpha = new ArrayList<>();
+                for (int p = 0; p < row; p++) {
+                    for (int q = 0; q < column; q++) {
+                        if (p == q) {
+                            alpha.add(mat[p][q]);
+                        }
+                    }
+                }
+                System.out.println("diagonal");
+                diagonal matrix = new diagonal(row, alpha);
+                matrix_list.add(matrix);
 
-             }
-             if (flag_upper == true && flag_lower == false) {
-                 System.out.println("upper");
-                 upper_triangular matrix = new upper_triangular(row, column, mat);
-                 matrix_list.add(matrix);
-             }
-             if (flag_upper == false && flag_lower == true) {
-                 System.out.println("lower");
-                 lower_triangular matrix = new lower_triangular(row, column, mat);
-                 matrix_list.add(matrix);
-             }
-             if (flag_symmetric == true && flag_skewSymmetric == false) {
-                 System.out.println("symmetric");
-                 symmetric matrix = new symmetric(row, column, mat);
-                 matrix_list.add(matrix);
-             }
-             if (flag_symmetric == false && flag_skewSymmetric == true) {
-                 System.out.println("skew");
-                 skew_symmetric matrix = new skew_symmetric(row, column, mat);
-                 matrix_list.add(matrix);
-             }
-         }
+            }
+            if (flag_upper == true && flag_lower == false) {
+                System.out.println("upper");
+                upper_triangular matrix = new upper_triangular(row, column, mat);
+                matrix_list.add(matrix);
+            }
+            if (flag_upper == false && flag_lower == true) {
+                System.out.println("lower");
+                lower_triangular matrix = new lower_triangular(row, column, mat);
+                matrix_list.add(matrix);
+            }
+            if (flag_symmetric == true && flag_skewSymmetric == false) {
+                System.out.println("symmetric");
+                symmetric matrix = new symmetric(row, column, mat);
+                matrix_list.add(matrix);
+            }
+            if (flag_symmetric == false && flag_skewSymmetric == true) {
+                System.out.println("skew");
+                skew_symmetric matrix = new skew_symmetric(row, column, mat);
+                matrix_list.add(matrix);
+            }
+        }
         if(flag_rectangle==false && flag_diagonal==false && flag_ones==false &&flag_lower==false && flag_null==false &&flag_skewSymmetric==false &&flag_singular==false) {
-             System.out.println("Square");
-             flag_square=true;
-             square_matrix matrix = new square_matrix(row, column, mat);
-             matrix_list.add(matrix);
-         }
+            System.out.println("Square");
+            flag_square=true;
+            square_matrix matrix = new square_matrix(row, column, mat);
+            matrix_list.add(matrix);
+        }
         ArrayList<String> alpha=new ArrayList<>();
         if(flag_singleton==true){
             alpha.add("Singular");
@@ -466,7 +466,7 @@ public class Main {
                 4.division""");
         int choice=Reader1.nextInt();
         if(choice==1){
-           show_mat_list();
+            show_mat_list();
             float first_mat[][];
             float second_mat[][];
             int in1=Reader1.nextInt();
@@ -539,7 +539,7 @@ public class Main {
                 float[][] temp = new float[rows][col];
                 for (int i = 0; i < rows; i++) {
                     for (int j = 0; j < col; j++) {
-                            temp[i][j] =  p* second_mat[i][j];
+                        temp[i][j] =  p* second_mat[i][j];
                     }
                 }
                 System.out.println("\nResultant Matrix:");
@@ -560,7 +560,7 @@ public class Main {
                 float[][] temp = new float[rows][col];
                 for (int i = 0; i < rows; i++) {
                     for (int j = 0; j < col; j++) {
-                            temp[i][j] =  p* second_mat[i][j];
+                        temp[i][j] =  p* second_mat[i][j];
                     }
                 }
                 System.out.println(matrix_list.get(in1-1).getType());
@@ -637,7 +637,7 @@ public class Main {
 
             }
 
-      }
+        }
     }
     public static void transpose() throws IOException {
         show_mat_list();
@@ -765,11 +765,11 @@ public class Main {
         float[][] temp;
         temp=matrix_list.get(choice-1).inverse();
         System.out.println("\nInverse of matrix is:");
-            for (int i = 0; i < 2; ++i) {
-                for (int j = 0; j < 2; ++j)
-                    System.out.print(temp[i][j]+" ");
-                System.out.print("\n");
-            }
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 2; ++j)
+                System.out.print(temp[i][j]+" ");
+            System.out.print("\n");
+        }
 
     }
     public static void createMat() throws IOException {
@@ -1059,16 +1059,16 @@ public class Main {
                 "Singleton",
                 "Ones",
                 "Null"};
-            for(int i=0;i<matrix_list.size();i++){
-                ArrayList<String> temp=matrix_list.get(i).return_types();
-                for(int j=0;j<temp.size();j++){
-                    if(temp.get(j).equals(predefined[choice-1])){
-                        for (int k = 0; k < matrix_list.get(i).getRow(); k++) {
-                            for (int p = 0; p < matrix_list.get(i).getColumn(); p++) {
-                                System.out.print(matrix_list.get(i).getMat()[k][p] + " ");
-                            }
-                            System.out.println();
+        for(int i=0;i<matrix_list.size();i++){
+            ArrayList<String> temp=matrix_list.get(i).return_types();
+            for(int j=0;j<temp.size();j++){
+                if(temp.get(j).equals(predefined[choice-1])){
+                    for (int k = 0; k < matrix_list.get(i).getRow(); k++) {
+                        for (int p = 0; p < matrix_list.get(i).getColumn(); p++) {
+                            System.out.print(matrix_list.get(i).getMat()[k][p] + " ");
                         }
+                        System.out.println();
+                    }
                 }
             }
         }
@@ -1636,7 +1636,7 @@ class diagonal extends square_matrix{
         for(int i=0;i<row;i++){
             for(int j=0;j<row;j++){
                 if(i==j)
-                temp[i][j]= this.alpha.get(i);
+                    temp[i][j]= this.alpha.get(i);
             }
         }
         return temp;
